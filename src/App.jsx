@@ -1,35 +1,55 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react';
+import SearchBar from './components/SearchBar';
+import WeatherCard from './components/WeatherCard';
+import useReverseGeocoding from './custom hooks/useReverseGeocoding';
+import useWeather from './custom hooks/useWeather';
+import useSearchedCity from './custom hooks/useSearchedCity';
+import './index.css';
+import Navbar from './components/Navbar';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [coordinates, setCoordinates] = useState(null);
+  const [city, setCity] = useState('');
+  const [error, setError] = useState('');
+
+  const { coordinates: searchedCoordinates, searchError, fetchCoordinates } = useSearchedCity();
+  const { cityName, geoError } = useReverseGeocoding(coordinates);
+  const { weather, timezone, weatherError, loading: weatherLoading } = useWeather(coordinates);
+
+  // Se vengono trovate nuove coordinate da ricerca manuale
+  useEffect(() => {
+    if (searchedCoordinates) {
+      setCoordinates(searchedCoordinates);
+    }
+  }, [searchedCoordinates]);
+
+  // Se arriva il nome città dal reverse geocoding (GPS)
+  useEffect(() => {
+    if (cityName) setCity(cityName);
+  }, [cityName]);
+
+  // Gestione errori
+  useEffect(() => {
+    setError(searchError || geoError || weatherError || '');
+  }, [searchError, geoError, weatherError]);
+
+  const handleCitySearch = (searchedCity) => {
+    fetchCoordinates(searchedCity);
+  };
+
+  const handleUseGps = (coords) => {
+    setCoordinates(coords);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="app-container">
+      <Navbar timezone={timezone} />
+      {weatherLoading && <p className="loading">🌦️ Caricamento meteo...</p>}
+      <SearchBar onSearch={handleCitySearch} onUseGps={handleUseGps} />
+      {error && <p className="error">{error}</p>}
+      {weather && <WeatherCard weather={weather} city={city} timezone={timezone} />}
+    </div>
+  );
 }
 
-export default App
+export default App;

@@ -1,0 +1,198 @@
+/* Toggle base */
+.toggle {
+  width: 6em;
+  aspect-ratio: 2.2 / 1;
+  height: 65px;
+  border-radius: 50px;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.2);
+  transition: background 1s ease;
+}
+
+.sky {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-day);
+  transition: background 1s ease;
+}
+
+.toggle.dark .sky {
+  background: linear-gradient(to bottom, #0d1b2a, #1b263b);
+}
+
+/* Sole / Luna */
+.circle {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: var(--sun-color);
+  transform: translateY(-50%);
+  box-shadow: 0 0 15px rgba(255, 220, 100, 0.7);
+  transition: all 1s ease;
+}
+
+.toggle.dark .circle {
+  left: 80px;
+  background: var(--moon-color);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* Crateri sulla luna */
+.toggle.dark .circle::before,
+.toggle.dark .circle::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.toggle.dark .circle::before {
+  width: 10px;
+  height: 10px;
+  top: 8px;
+  left: 6px;
+}
+
+.toggle.dark .circle::after {
+  width: 6px;
+  height: 6px;
+  bottom: 10px;
+  right: 8px;
+}
+
+/* Nuvole */
+.clouds {
+  position: absolute;
+  top: 60%;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background: radial-gradient(white 40%, transparent 41%) 0 0 / 50px 50px repeat-x;
+  opacity: 0.5;
+  animation: moveClouds 20s linear infinite;
+  transition: opacity 1s ease;
+}
+
+.toggle.dark .clouds {
+  opacity: 0;
+}
+
+@keyframes moveClouds {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Stelle realistiche con parallasse e twinkle casuale */
+.stars,
+.stars2 {
+  position: absolute;
+  width: 300%;
+  height: 200%;
+  top: -50%;
+  left: -100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease;
+}
+
+.toggle.dark .stars,
+.toggle.dark .stars2 {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Primo livello – stelle principali */
+.stars {
+  background-image: radial-gradient(white 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: moveStars1 25s linear infinite;
+  filter: brightness(1.2);
+  visibility: hidden;
+}
+
+/* Secondo livello – stelle più lontane */
+.stars2 {
+  background-image: radial-gradient(white 1px, transparent 1px);
+  background-size: 70px 70px;
+  animation: moveStars2 60s linear infinite;
+  opacity: 0.8;
+  filter: brightness(0.8);
+  visibility: hidden;
+}
+
+/* Pseudo-elemento per luccichio casuale */
+.stars::after,
+.stars2::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(white 1px, transparent 1px);
+  background-size: 50px 50px;
+  opacity: 0.6;
+  mix-blend-mode: screen;
+  animation: twinkleRandom 6s ease-in-out infinite;
+}
+
+/* Movimento continuo e fluido */
+@keyframes moveStars1 {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(-150px, 20px);
+  }
+}
+
+@keyframes moveStars2 {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(-80px, -10px);
+  }
+}
+
+/* Luccichio naturale e casuale */
+@keyframes twinkleRandom {
+  0% {
+    opacity: 0.4;
+    filter: brightness(0.9);
+  }
+  25% {
+    opacity: 0.9;
+    filter: brightness(1.6);
+  }
+  50% {
+    opacity: 0.5;
+    filter: brightness(1);
+  }
+  75% {
+    opacity: 0.8;
+    filter: brightness(1.3);
+  }
+  100% {
+    opacity: 0.4;
+    filter: brightness(0.9);
+  }
+}
+
+.toggle:not(.dark) .stars::after,
+.toggle:not(.dark) .stars2::after {
+  opacity: 0;
+  animation: none; 
+}
+
+.navbar .toggle {
+  width: 120px;
+  height: 50px;
+  transform: scale(0.7);
+}
