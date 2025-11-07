@@ -1,18 +1,73 @@
-:root {
-  --bg-day: linear-gradient(to top, #a0d8ff, #e0f7ff);
-  --bg-night: linear-gradient(to bottom, #0d1b2a, #1b263b);
-  --sun-color: #ffdc64;
-  --moon-color: #cfd8dc; 
+@import "tailwindcss";
+
+:root { --font-ui: 'Inter', system-ui, -apple-system, Segoe UI, Roboto; }
+html, body, #root { height: 100%; }
+body { font-family: var(--font-ui); }
+
+.panel, .glass {
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.20);
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+}
+.panel { padding: 14px 16px; }
+.glass { padding: 16px; }
+
+.input {
+  width: 100%; padding: 10px 40px; border-radius: 14px;
+  background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.20);
+  outline: none; transition: all .2s;
+}
+.input:focus {
+  border-color: rgba(255,255,255,0.35);
+  box-shadow: 0 0 0 8px rgba(255,255,255,0.05) inset;
 }
 
-.app-container {
-  font-family: 'Inter', sans-serif;
-  text-align: center;
+.pill {
+  padding: 10px 14px; border-radius: 999px;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.20);
+  transition: all .2s;
+}
+.pill:hover { background: rgba(255,255,255,0.18); }
+
+.hint { color: rgba(255,255,255,0.80); }
+
+.skel {
+  background: linear-gradient(90deg, rgba(255,255,255,.14), rgba(255,255,255,.10), rgba(255,255,255,.14));
+  background-size: 200% 100%;
+  animation: sk 1.4s infinite linear;
+  border-radius: 12px;
+}
+@keyframes sk { 0%{background-position:200% 0}100%{background-position:-200% 0} }
+
+.hour-card {
+  padding: 12px; border-radius: 16px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+  transition: all .25s ease;
+}
+.hour-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  border-color: rgba(255,255,255,0.28);
+}
+.hour-card--now {
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.25) inset, 0 10px 26px rgba(0,0,0,0.2);
 }
 
-.error {
-  color: red;
-  font-weight: bold;
+/* === SFONDI DINAMICI BASATI SUL METEO  === */
+
+.bg-mood-clear {
+  /* Sole: giallo → azzurro cielo */
+  background:
+    radial-gradient(900px 500px at 18% -10%, rgba(255,255,255,.35), transparent 60%),
+    linear-gradient(180deg, #FFE47A 0%, #FFD24D 22%, #7AD6FF 70%, #9AE0FF 100%);
+}
+
+.bg-mood-clouds {
+  /* Parzialmente nuvoloso: celesti/azzurro-grigio */
+  background: linear-gradient(180deg, #5685a0 0%, #b8d5e8 50%, #9fbdd3 100%);
 }
 
 html, body {
@@ -29,6 +84,41 @@ body.dark-mode {
   background: var(--bg-night);
   color: white;
   transition: background 1s ease, color 1s ease;
+.bg-mood-rain {
+  /* Pioggia: blu medio-intenso */
+  background: linear-gradient(180deg, #3670aa 0%, #24548f 60%, #2f5e9c 100%);
+}
+
+.bg-mood-drizzle {
+  /* Pioviggine: azzurro tenue */
+  background: linear-gradient(180deg, #8cbad7 0%, #bfe4fb 100%);
+}
+
+.bg-mood-snow {
+  /* Neve: bianco ghiaccio chiaro */
+  background: linear-gradient(180deg, #f4fbff 0%, #e2f3ff 50%, #d3ecfb 100%);
+}
+
+.bg-mood-storm {
+  /* Temporale: viola con sfumature blu */
+  background: linear-gradient(180deg, #a493ff 0%, #7f6de6 55%, #5e4fc0 100%);
+}
+
+.bg-mood-mist {
+  /* Nebbia: grigio-azzurro */
+  background: linear-gradient(180deg, #e7eef3 0%, #cfdbe3 60%, #bac9d4 100%);
+}
+
+.bg-mood-wind {
+  /* Vento: teal/azzurro luminoso */
+  background: linear-gradient(180deg, #c9f4ff 0%, #9ee6f3 55%, #7dd7e6 100%);
+}
+
+.bg-mood-night {
+  /* Notte serena: blu profondo con aloni */
+  background:
+    radial-gradient(700px 320px at 16% -10%, rgba(255,255,255,.28), transparent 60%),
+    linear-gradient(180deg, #153555 0%, #102a45 60%, #0c2237 100%);
 }
 
 /* Icone meteo */
@@ -89,5 +179,3 @@ body.dark-mode {
   0%,100%{filter:drop-shadow(0 0 8px rgba(255,230,130,.25))}
   50%{filter:drop-shadow(0 0 14px rgba(255,230,130,.55))}
 }
-
-
