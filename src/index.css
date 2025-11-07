@@ -70,6 +70,20 @@ body { font-family: var(--font-ui); }
   background: linear-gradient(180deg, #5685a0 0%, #b8d5e8 50%, #9fbdd3 100%);
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to bottom, #b3d4fc, #6baefc);
+  background-attachment: fixed;
+  background-repeat: no-repeat; 
+}
+
+/* Modalità dark sul body */
+body.dark-mode {
+  background: var(--bg-night);
+  color: white;
+  transition: background 1s ease, color 1s ease;
 .bg-mood-rain {
   /* Pioggia: blu medio-intenso */
   background: linear-gradient(180deg, #3670aa 0%, #24548f 60%, #2f5e9c 100%);

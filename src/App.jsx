@@ -1,127 +1,53 @@
-import React, { useMemo, useState } from "react";
+import { useState, useEffect, useMemo } from 'react';
+import SearchBar from './components/SearchBar';
+import WeatherCard from './components/WeatherCard';
+import useReverseGeocoding from './custom hooks/useReverseGeocoding';
 import Daily from "./components/Daily";
 import DailyChart from "./components/DailyChart";
-import SearchCity from "./components/SearchCity";
-import LogoNuvolino from "./components/LogoNuvolino";
+import useWeather from './custom hooks/useWeather';
 import RadarMap from "./components/RadarMap";
+import useSearchedCity from './custom hooks/useSearchedCity';
+import './index.css';
+import Navbar from './components/Navbar';
 
-function CrosshairIcon({ className = "w-4 h-4" }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-    >
-      <circle cx="12" cy="12" r="3.2" />
-      <path d="M12 2v3M12 19v3M2 12h3M19 12h3" strokeLinecap="round" />
-    </svg>
-  );
-}
+function App() {
+  const [coordinates, setCoordinates] = useState(null);
+  const [city, setCity] = useState('');
+  const [error, setError] = useState('');
 
-// --- helper per formattare Paese in IT (da codice ISO) ---
-const regionNamesIT =
-  typeof Intl !== "undefined" && Intl.DisplayNames
-    ? new Intl.DisplayNames(["it"], { type: "region" })
-    : null;
-
-// --- REVERSE GEOCODING con fallback multiplo ---
-async function reverseGeocodeSmart(lat, lon) {
-  // 1) Open-Meteo Reverse
-  try {
-    const res = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=it&count=1`,
-      { headers: { Accept: "application/json" } }
-    );
-    const data = await res.json();
-    const r = data?.results?.[0];
-    if (r) {
-      const country =
-        (r.country_code &&
-          regionNamesIT &&
-          regionNamesIT.of(String(r.country_code).toUpperCase())) ||
-        r.country ||
-        null;
-      const city = r.name || r.admin2 || r.admin1 || null;
-      if (city && country) {
-        // Evita doppioni tipo "Roma (Italia)" se già presente
-        return city.includes(country) ? city : `${city} (${country})`;
-      }
-      if (city) return city;
-      if (country) return country;
-    }
-  } catch (e) {
-    // ignora, passa al prossimo fallback
-    console.warn("Reverse OM fallito:", e);
-  }
-
-  // 2) Nominatim (OpenStreetMap)
-  try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`,
-      {
-        headers: {
-          Accept: "application/json",
-          // user-agent “gentile”: evita rate limit
-          "User-Agent": "Nuvolino/1.0 (+https://example.com)",
-          Referer: "https://example.com",
-        },
-      }
-    );
-    const d = await res.json();
-    const a = d?.address || {};
-    const city =
-      a.city ||
-      a.town ||
-      a.village ||
-      a.municipality ||
-      a.county ||
-      a.state ||
-      null;
-    const country = a.country || null;
-    if (city && country) return `${city} (${country})`;
-    if (city) return city;
-    if (country) return country;
-  } catch (e) {
-    console.warn("Reverse Nominatim fallito:", e);
-  }
-
-  // 3) fallback finale
-  return null;
-}
-
-export default function App() {
+  const { coordinates: searchedCoordinates, searchError, fetchCoordinates } = useSearchedCity();
+  const { cityName, geoError } = useReverseGeocoding(coordinates);
+  const { weather, timezone, weatherError, loading: weatherLoading } = useWeather(coordinates);
   const [coords, setCoords] = useState({ lat: 41.9028, lon: 12.4964 });
-  const [city, setCity] = useState("Roma");
   const [units, setUnits] = useState("metric");
   const [mood, setMood] = useState("clear");
   const [daysData, setDaysData] = useState([]);
 
-  const handleSelectCity = (opt) => {
-    const { lat, lon, name } = opt || {};
-    if (typeof lat === "number" && typeof lon === "number") {
-      setCoords({ lat, lon });
+
+  // Se vengono trovate nuove coordinate da ricerca manuale
+  useEffect(() => {
+    if (searchedCoordinates) {
+      setCoordinates(searchedCoordinates);
     }
-    if (name) setCity(name);
+  }, [searchedCoordinates]);
+
+  // Se arriva il nome città dal reverse geocoding (GPS)
+  useEffect(() => {
+    if (cityName) setCity(cityName);
+  }, [cityName]);
+
+  // Gestione errori
+  useEffect(() => {
+    setError(searchError || geoError || weatherError || '');
+  }, [searchError, geoError, weatherError]);
+
+  const handleCitySearch = (searchedCity) => {
+    fetchCoordinates(searchedCity);
   };
 
-  async function geolocalizza() {
-    if (!navigator.geolocation) {
-      alert("Geolocalizzazione non supportata");
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const { latitude, longitude } = pos.coords;
-        setCoords({ lat: latitude, lon: longitude });
-        setCity("Aggiornamento…");
-        const label = await reverseGeocodeSmart(latitude, longitude);
-        setCity(label || `Lat ${latitude.toFixed(2)}, Lon ${longitude.toFixed(2)}`);
-      },
-      () => alert("Impossibile ottenere la posizione")
-    );
-  }
+  const handleUseGps = (coords) => {
+    setCoordinates(coords);
+  };
 
   // Click sulla mappa → aggiorna coord + nome
   async function handleMapClick(lat, lon) {
@@ -145,36 +71,12 @@ export default function App() {
   return (
     <div className={`${containerBg} min-h-screen text-white/95`}>
       <div className="max-w-6xl mx-auto px-4 py-6">
-        {/* HEADER */}
-        <header className="flex items-center justify-between mb-6">
-          <LogoNuvolino size={86} textSize="lg" />
-          <div className="flex items-center gap-3">
-            <SearchCity
-              placeholder="Cerca città…"
-              className="w-64"
-              onSelect={handleSelectCity}
-            />
-            <button
-              type="button"
-              onClick={geolocalizza}
-              className="pill text-sm flex items-center gap-2"
-              title="Usa la tua posizione"
-            >
-              <CrosshairIcon /> GPS
-            </button>
-            <button
-              className="pill text-sm"
-              title="Cambia unità"
-              onClick={() =>
-                setUnits((u) => (u === "metric" ? "imperial" : "metric"))
-              }
-            >
-              {tUnitLabel}
-            </button>
-          </div>
-        </header>
-
-        {/* CARD METEO + GRAFICO */}
+      <Navbar timezone={timezone} />
+      {weatherLoading && <p className="loading">🌦️ Caricamento meteo...</p>}
+      <SearchBar onSearch={handleCitySearch} onUseGps={handleUseGps} />
+      {error && <p className="error">{error}</p>}
+      {weather && <WeatherCard weather={weather} city={city} timezone={timezone} />}
+    {/* CARD METEO + GRAFICO */}
         <section
           className="rounded-3xl border border-white/30 bg-[rgba(255,255,255,0.18)]
                      backdrop-blur-md shadow-[0_40px_100px_rgba(0,0,0,0.45)]
@@ -216,5 +118,7 @@ export default function App() {
         </footer>
       </div>
     </div>
-  );
+  )
 }
+
+export default App

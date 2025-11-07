@@ -1,0 +1,33 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
+  transition: background 1s ease;
+  background: linear-gradient(to bottom, #b3d4fc, #6baefc);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+body.dark-mode .navbar {
+  background: var(--bg-night);
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.navbar-logo {
+  height: 60px;
+  width: auto;
+  margin-left: 22px;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
