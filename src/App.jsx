@@ -7,6 +7,7 @@ import DailyChart from "./components/DailyChart";
 import useWeather from './custom hooks/useWeather';
 import RadarMap from "./components/RadarMap";
 import useSearchedCity from './custom hooks/useSearchedCity';
+import useGeolocation from './custom hooks/useGeolocation';
 import './index.css';
 import Navbar from './components/Navbar';
 
@@ -22,6 +23,18 @@ function App() {
   const [units, setUnits] = useState("metric");
   const [mood, setMood] = useState("clear");
   const [daysData, setDaysData] = useState([]);
+  const { getLocation } = useGeolocation();
+
+  // Geolocalizzazione automatica al mount
+  useEffect(() => {
+  (async () => {
+    const coords = await getLocation();
+    if (coords) {
+      setCoordinates(coords);
+      setCoords(coords); // aggiorna anche la mappa/radar
+    }
+  })();
+  }, []);
 
 
   // Se vengono trovate nuove coordinate da ricerca manuale
