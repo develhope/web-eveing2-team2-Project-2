@@ -109,7 +109,7 @@ export default function Daily({
                   </div>
                 </div>
                 <div className="text-xs hint mt-1 text-center">
-                  💧 {g.pop ?? 0}% • 💨 {Math.round(g.wind)} {units === "metric" ? "km/h" : "mph"}
+                   <i className="fa-solid fa-cloud-rain mr-[2px]"></i>{g.pop ?? 0}% • <i className="fa-solid fa-wind mr-[2px]"></i>{Math.round(g.wind)} {units === "metric" ? "km/h" : "mph"}
                 </div>
               </div>
             ))}
