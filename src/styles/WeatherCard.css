@@ -21,12 +21,13 @@
 
 /* --- Sezione superiore --- */
 .weather-top {
-  display: grid;
-  grid-template-columns: auto 1fr auto; 
-  align-items: start;
   position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   width: 100%;
 }
+
 
 .weather-info-left {
   display: flex;
@@ -53,10 +54,16 @@
 
 /* --- Icona centrale --- */
 .weather-icon-center {
-  flex: 1;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
+  align-items: center;
+  height: 100%;
 }
+
 
 .weather-main-icon {
   width: 60px;

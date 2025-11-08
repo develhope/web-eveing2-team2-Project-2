@@ -8,7 +8,7 @@ function WeatherCard({ weather, city, timezone }) {
   const sunrise = new Date(weather.sunrise).toLocaleTimeString("it-IT", { timeZone: timezone, hour: "2-digit", minute: "2-digit"});
   const sunset = new Date(weather.sunset).toLocaleTimeString("it-IT", { timeZone: timezone, hour: "2-digit", minute: "2-digit" });
 
-  // Valutazione qualitativa AQI con colore
+  // Valutazione qualitativa AQI
   const getAQILevel = (aqi) => {
   if (aqi <= 20) return { label: "Ottima" };
   if (aqi <= 40) return { label: "Buona" };
@@ -34,7 +34,7 @@ function WeatherCard({ weather, city, timezone }) {
           </div>
 
           <div className="weather-icon-center">
-            <IconWeather type={weather.iconType} className="weather-main-icon w-16 h-16 icon-glow" />
+            <IconWeather type={weather.iconType} className="weather-main-icon w-10 h-10 weather-icon icon-glow" />
           </div>
 
           <div className="weather-sun-right">
