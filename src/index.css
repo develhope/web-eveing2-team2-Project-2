@@ -70,6 +70,13 @@ body { font-family: var(--font-ui); }
   background: linear-gradient(180deg, #5685a0 0%, #b8d5e8 50%, #9fbdd3 100%);
 }
 
+:root {
+  --bg-day: linear-gradient(to top, #a0d8ff, #e0f7ff);
+  --bg-night: linear-gradient(to bottom, #0d1b2a, #1b263b);
+  --sun-color: #ffdc64;
+  --moon-color: #cfd8dc; 
+}
+
 html, body {
   height: 100%;
   margin: 0;
