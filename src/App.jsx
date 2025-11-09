@@ -83,8 +83,8 @@ function App() {
 
   return (
     <div className={`${containerBg} min-h-screen text-white/95`}>
-      <div className="max-w-6xl mx-auto">
       <Navbar timezone={timezone} />
+      <div className="max-w-6xl mx-auto">
       {weatherLoading && <p className="loading">🌦️ Caricamento meteo...</p>}
       <SearchBar onSearch={handleCitySearch} onUseGps={handleUseGps} />
       {error && <p className="error">{error}</p>}
@@ -134,4 +134,4 @@ function App() {
   )
 }
 
-export default App
+export default App;

@@ -5,10 +5,19 @@ Converte OpenMeteo -> valori compatibili con mapOWToIcon (OpenWeather)*/
 export function mapOMToOWMStyle(code, pop = 0) {
   const id = Number(code);
 
-  // 🌧️ Gestione probabilità di pioggia
-  if (pop >= 0.5) return { icon: "rain", description: "Probabile pioggia" };
-  if (pop >= 0.2)
-    return { icon: "drizzle", description: "Possibile pioggerella" };
+  // Se il codice meteo è neutro o poco informativo, usa la probabilità
+  const isNeutral = [0, 1, 2, 3].includes(id);
+
+  if (isNeutral) {
+    if (pop >= 0.9) return { icon: "storm", description: "Temporale" };
+    if (pop >= 0.5) return { icon: "rain", description: "Probabile pioggia" };
+    if (pop >= 0.2)
+      return { icon: "drizzle", description: "Possibile pioggerella" };
+  }
+
+  if (pop >= 0.9 && [61, 63, 65, 80, 81, 82].includes(id)) {
+    return { icon: "storm", description: "Possibile temporale" };
+  }
 
   if (id === 0) return { icon: "clear", description: "Sereno" };
   if (id === 1) return { icon: "clear", description: "Prevalentemente sereno" };

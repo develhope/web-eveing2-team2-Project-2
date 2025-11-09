@@ -41,6 +41,7 @@ function Navbar({ timezone }) {
 
   return (
     <nav className="navbar">
+      <div className="navbar-container">
       <div className="navbar-left">
         <img
           src={isDark ? logoDark : logo}
@@ -52,6 +53,7 @@ function Navbar({ timezone }) {
       <div className="navbar-right">
         <p style={{ textTransform: "capitalize" }}>{localTime}</p>
         <ToggleLightDark isDark={isDark} toggleMode={toggleMode} />
+      </div>
       </div>
     </nav>
   );

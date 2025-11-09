@@ -71,7 +71,7 @@ body { font-family: var(--font-ui); }
 }
 
 :root {
-  --bg-day: linear-gradient(to top, #a0d8ff, #e0f7ff);
+  --bg-day: linear-gradient(to top, #a0d8ff, #b0e0ff);
   --bg-night: linear-gradient(to bottom, #0d1b2a, #1b263b);
   --sun-color: #ffdc64;
   --moon-color: #cfd8dc; 
