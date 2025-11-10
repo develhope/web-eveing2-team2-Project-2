@@ -82,19 +82,17 @@ function App() {
   const tUnitLabel = units === "metric" ? "°C" : "°F";
 
   return (
-    <div className={`${containerBg} min-h-screen text-white/95`}>
+    <div className="min-h-screen text-white/95">
       <Navbar timezone={timezone} />
+      <SearchBar onSearch={handleCitySearch} onUseGps={handleUseGps} />
       <div className="max-w-6xl mx-auto">
       {weatherLoading && <p className="loading">🌦️ Caricamento meteo...</p>}
-      <SearchBar onSearch={handleCitySearch} onUseGps={handleUseGps} />
       {error && <p className="error">{error}</p>}
       {weather && <WeatherCard weather={weather} city={city} timezone={timezone} />}
     {/* CARD METEO + GRAFICO */}
-        <section
-          className="rounded-3xl border border-white/30 bg-[rgba(255,255,255,0.18)]
-                     backdrop-blur-md shadow-[0_40px_100px_rgba(0,0,0,0.45)]
-                     p-6 flex flex-col gap-6"
-        >
+        <section className={`rounded-3xl border border-white/30 backdrop-blur-md shadow-[0_40px_100px_rgba(0,0,0,0.45)]
+                    p-6 flex flex-col gap-6
+                    ${containerBg}`}>
           <Daily
             key={`${coords.lat},${coords.lon},${city}`}
             lat={coords.lat}

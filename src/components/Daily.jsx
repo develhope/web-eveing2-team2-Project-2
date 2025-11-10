@@ -63,7 +63,7 @@ export default function Daily({
   return (
     <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between">
-        <div className="text-[13px] hint">
+        <div className="text-[13px]">
           Prossimi 10 giorni{city ? ` — ${city}` : ""}
         </div>
         <div className="flex gap-2">
@@ -108,7 +108,7 @@ export default function Daily({
                     / {Math.round(g.tmin)}{tUnit}
                   </div>
                 </div>
-                <div className="text-xs hint mt-1 text-center">
+                <div className="text-xs mt-1 text-center">
                    <i className="fa-solid fa-cloud-rain mr-[2px]"></i>{g.pop ?? 0}% • <i className="fa-solid fa-wind mr-[2px]"></i>{Math.round(g.wind)} {units === "metric" ? "km/h" : "mph"}
                 </div>
               </div>

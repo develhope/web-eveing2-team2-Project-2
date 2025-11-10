@@ -1,11 +1,12 @@
 .navbar-container {
-  max-width: 72rem; /* ≈ 6xl in Tailwind */
+  max-width: 72rem;
   margin: 0 auto;
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 100%;
+  position: relative;
 }
 
 .navbar {
@@ -14,7 +15,9 @@
   align-items: center;
   height: 80px;
   transition: background 1s ease;
-  background: linear-gradient(to bottom, #b3d4fc, #6baefc);
+  background: linear-gradient(to top, #b3d4fc, #6baefc);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -42,4 +45,8 @@ body.dark-mode .navbar {
   justify-content: flex-end;
   gap: 0.5rem;
   margin-right: 24px;
+}
+
+body:not(.dark-mode) .navbar-right p {
+ color:#0c2846;
 }

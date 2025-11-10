@@ -117,7 +117,7 @@
 }
 
 /* Modalità chiara/scura */
-body:not(.dark-mode) .weather-card { color: #0d1b2a; }
+body:not(.dark-mode) .weather-card { color:#0c2846; }
 body.dark-mode .weather-card { color: #fff; }
 
 
