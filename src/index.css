@@ -54,20 +54,6 @@ body { font-family: var(--font-ui); }
   box-shadow: 0 0 0 1px rgba(255,255,255,0.25) inset, 0 10px 26px rgba(0,0,0,0.2);
 }
 
-/* === SFONDI DINAMICI BASATI SUL METEO  === */
-
-.bg-mood-clear {
-  /* Sole: giallo → azzurro cielo */
-  background:
-    radial-gradient(900px 500px at 18% -10%, rgba(255,255,255,.35), transparent 60%),
-    linear-gradient(180deg, #FFE47A 0%, #FFD24D 22%, #7AD6FF 70%, #9AE0FF 100%);
-}
-
-.bg-mood-clouds {
-  /* Parzialmente nuvoloso: celesti/azzurro-grigio */
-  background: linear-gradient(180deg, #5685a0 0%, #b8d5e8 50%, #9fbdd3 100%);
-}
-
 :root {
   --bg-day: linear-gradient(to top, #a0d8ff, #b0e0ff);
   --bg-night: linear-gradient(to bottom, #0d1b2a, #1b263b);
@@ -94,6 +80,31 @@ body.dark-mode {
   transition: background 1s ease, color 1s ease;
   background-attachment: fixed;
   background-repeat: no-repeat;
+}
+/* Testo e icona loading */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.icon {
+  width: 16px;
+  height: 16px;
+}
+body:not(.dark-mode) .loading {color:#0c2846;}
+
+/* === SFONDI DINAMICI BASATI SUL METEO  === */
+.bg-mood-clear {
+  /* Sole: giallo → azzurro cielo */
+  background:
+    radial-gradient(900px 500px at 18% -10%, rgba(255,255,255,.35), transparent 60%),
+    linear-gradient(180deg, #FFE47A 0%, #FFD24D 22%, #7AD6FF 70%, #9AE0FF 100%);
+}
+
+.bg-mood-clouds {
+  /* Parzialmente nuvoloso: celesti/azzurro-grigio */
+  background: linear-gradient(180deg, #5685a0 0%, #b8d5e8 50%, #9fbdd3 100%);
 }
 .bg-mood-rain {
   /* Pioggia: blu medio-intenso */

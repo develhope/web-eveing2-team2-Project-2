@@ -86,7 +86,12 @@ function App() {
       <Navbar timezone={timezone} />
       <SearchBar onSearch={handleCitySearch} onUseGps={handleUseGps} />
       <div className="max-w-6xl mx-auto">
-      {weatherLoading && <p className="loading">🌦️ Caricamento meteo...</p>}
+{weatherLoading && (
+  <p className="loading my-6">
+    <img src="/favicon.png" alt="Caricamento" className="icon" />
+    Caricamento dati meteo...
+  </p>
+)}
       {error && <p className="error">{error}</p>}
       {weather && <WeatherCard weather={weather} city={city} timezone={timezone} />}
     {/* CARD METEO + GRAFICO */}
