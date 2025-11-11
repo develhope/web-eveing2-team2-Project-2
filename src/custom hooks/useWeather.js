@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import { DateTime } from "luxon";
+import tzlookup from "tz-lookup";
 import { mapOMToOWMStyle } from "../utils/weatherAdapter";
 
 function useWeather(coordinates) {
   const [weather, setWeather] = useState(null);
-  const [timezone, setTimezone] = useState("Europe/Rome");
-  const [weatherError, setWeatherError] = useState("");
+  const [timezone, setTimezone] = useState(null);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -12,24 +14,42 @@ function useWeather(coordinates) {
 
     const fetchWeather = async () => {
       setLoading(true);
-      setWeatherError("");
+      setError("");
 
       try {
-        const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${coordinates.lat}&longitude=${coordinates.lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,precipitation_probability,cloudcover,wind_speed_10m,wind_direction_10m,uv_index,surface_pressure,weathercode&daily=sunrise,sunset&timezone=auto`;
+        // Trova timezone locale
+        const tz = tzlookup(coordinates.lat, coordinates.lon);
+        setTimezone(tz);
+
+        // Chiamata meteo
+        const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${
+          coordinates.lat
+        }&longitude=${
+          coordinates.lon
+        }&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,precipitation_probability,cloudcover,wind_speed_10m,wind_direction_10m,uv_index,surface_pressure,weathercode&daily=sunrise,sunset&timezone=${encodeURIComponent(
+          tz
+        )}`;
 
         const weatherRes = await fetch(weatherUrl);
         const data = await weatherRes.json();
 
         if (!data || !data.current || !data.daily) {
-          setWeatherError("Dati meteo non disponibili.");
+          setError("Dati meteo non disponibili.");
+          setLoading(false);
           return;
         }
 
-        const airUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${coordinates.lat}&longitude=${coordinates.lon}&current=european_aqi`;
+        // Chiamata qualità aria
+        const airUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${
+          coordinates.lat
+        }&longitude=${
+          coordinates.lon
+        }&current=european_aqi&timezone=${encodeURIComponent(tz)}`;
+
         const airRes = await fetch(airUrl);
         const airData = await airRes.json();
 
-        // Mappa meteo → icona + descrizione
+        // Mappa icona e descrizione meteo
         const { icon, description } = mapOMToOWMStyle(
           data.current.weathercode,
           data.current.precipitation_probability ??
@@ -37,61 +57,44 @@ function useWeather(coordinates) {
             0
         );
 
+        // Parse alba e tramonto (con Luxon)
+        const parseSunTimeLuxon = (str, tz) => {
+          if (!str) return "N/D";
+          const dtLocal = DateTime.fromISO(str, { zone: tz });
+          if (!dtLocal.isValid) return "N/D";
+          return dtLocal.toFormat("HH:mm");
+        };
+
+        const sunriseLocal = parseSunTimeLuxon(data.daily.sunrise[0], tz);
+        const sunsetLocal = parseSunTimeLuxon(data.daily.sunset[0], tz);
+
         setWeather({
-          // Dati principali
           temperature_2m: data.current.temperature_2m,
           apparent_temperature: data.current.apparent_temperature,
           relative_humidity_2m: data.current.relative_humidity_2m,
-
-          // Precipitazioni e probabilità (con fallback)
           precipitation: data.current.precipitation,
           precipitation_probability:
             data.current.precipitation_probability ??
             data.hourly?.precipitation_probability?.[0] ??
             0,
-
-          // Nuvolosità e pressione
           cloudcover: data.current.cloudcover,
           surface_pressure: data.current.surface_pressure,
-
-          // Vento (convertito da m/s → km/h)
           wind_speed_10m: data.current.wind_speed_10m * 3.6,
           wind_direction_10m: data.current.wind_direction_10m,
-
-          // UV Index
           uv_index: data.current.uv_index,
-
-          // Icona e descrizione meteo
           iconType: icon,
           description: description,
-
-          // Alba e tramonto
-          sunrise: data.daily.sunrise[0],
-          sunset: data.daily.sunset[0],
-
-          // Qualità dell’aria (se disponibile)
+          sunrise: sunriseLocal,
+          sunset: sunsetLocal,
           air_quality: airData?.current
             ? {
                 european_aqi: airData.current.european_aqi,
               }
             : null,
         });
-
-        let tz = data.timezone;
-
-        // A volte Open-Meteo restituisce solo "auto" o "GMT"
-        if (!tz || ["auto", "GMT"].includes(tz) || !tz.includes("/")) {
-          // fallback su Europe/Rome, ma verifica offset DST fornito
-          const offsetHours = (data.utc_offset_seconds ?? 3600) / 3600;
-          // Se offset = 2 → è ora legale (CEST)
-          // offset = 1 → ora solare (CET)
-          console.log("Offset orario:", offsetHours, "h");
-          tz = "Europe/Rome";
-        }
-        setTimezone(tz);
-      } catch (error) {
-        console.error(error);
-        setWeatherError("Errore nella richiesta meteo.");
+      } catch (err) {
+        console.error(err);
+        setError("Errore nella richiesta.");
       } finally {
         setLoading(false);
       }
@@ -100,7 +103,7 @@ function useWeather(coordinates) {
     fetchWeather();
   }, [coordinates]);
 
-  return { weather, timezone, weatherError, loading };
+  return { weather, timezone, error, loading };
 }
 
 export default useWeather;

@@ -5,8 +5,8 @@ import IconWeather from "./IconWeather";
 function WeatherCard({ weather, city, timezone }) {
   if (!weather) return null;
 
-  const sunrise = new Date(weather.sunrise).toLocaleTimeString("it-IT", { timeZone: timezone, hour: "2-digit", minute: "2-digit"});
-  const sunset = new Date(weather.sunset).toLocaleTimeString("it-IT", { timeZone: timezone, hour: "2-digit", minute: "2-digit" });
+  const sunrise = weather.sunrise;
+  const sunset = weather.sunset;
 
   // Valutazione qualitativa AQI
   const getAQILevel = (aqi) => {
