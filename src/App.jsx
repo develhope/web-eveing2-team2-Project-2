@@ -27,15 +27,14 @@ function App() {
 
   // Geolocalizzazione automatica al mount
   useEffect(() => {
-  (async () => {
-    const coords = await getLocation();
-    if (coords) {
-      setCoordinates(coords);
-      setCoords(coords); // aggiorna anche la mappa/radar
-    }
-  })();
+    (async () => {
+      const coords = await getLocation();
+      if (coords) {
+        setCoordinates(coords);
+        setCoords(coords); // aggiorna anche la mappa/radar
+      }
+    })();
   }, []);
-
 
   // Se vengono trovate nuove coordinate da ricerca manuale
   useEffect(() => {
@@ -62,37 +61,76 @@ function App() {
     setCoordinates(coords);
   };
 
+  // Funzione per ottenere il nome città da coordinate (reverse geocoding)
+  async function reverseGeocodeSmart(lat, lon) {
+    try {
+      const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=it`;
+      const res = await fetch(url, {
+        headers: {
+          "User-Agent": "nuvolino-app/1.0",
+        },
+      });
+
+      if (!res.ok) throw new Error("Errore geocoding");
+      const data = await res.json();
+
+      return (
+        data.address.city ||
+        data.address.town ||
+        data.address.village ||
+        data.display_name?.split(",")[0] ||
+        "Posizione sconosciuta"
+      );
+    } catch (err) {
+      console.error("Errore reverse geocoding:", err);
+      return "Posizione sconosciuta";
+    }
+  }
+
   // Click sulla mappa → aggiorna coord + nome
   async function handleMapClick(lat, lon) {
     setCoords({ lat, lon });
-    setCity("Aggiornamento…");
-    const label = await reverseGeocodeSmart(lat, lon);
-    setCity(label || `Lat ${lat.toFixed(2)}, Lon ${lon.toFixed(2)}`);
+    setCity("Aggiornamento...");
+    try {
+      const label = await reverseGeocodeSmart(lat, lon);
+      setCity(label || `Lat ${lat.toFixed(2)}, Lon ${lon.toFixed(2)}`);
+    } catch {
+      setCity(`Lat ${lat.toFixed(2)}, Lon ${lon.toFixed(2)}`);
+    }
   }
 
   // Sfondo dinamico dal mood (clear|clouds|rain|...)
   const containerBg = useMemo(() => {
-    const ok = new Set([
-      "clear", "clouds", "rain", "drizzle",
-      "snow", "storm", "mist", "wind", "night",
-    ]);
-    return ok.has(mood) ? `bg-mood-${mood}` : "bg-mood-clear";
-  }, [mood]);
+  const body = document.body;
+  const darkModeActive = body.classList.contains("dark-mode");
+
+  if (darkModeActive) {
+    // Se la dark mode è attiva, blocchiamo il background meteo dinamico
+    return "bg-mood-night";
+  }
+
+  const ok = new Set([
+    "clear", "clouds", "rain", "drizzle",
+    "snow", "storm", "mist", "wind", "night",
+  ]);
+  return ok.has(mood) ? `bg-mood-${mood}` : "bg-mood-clear";
+}, [mood]);
+
 
   const tUnitLabel = units === "metric" ? "°C" : "°F";
 
   return (
-    <div className="min-h-screen text-white/95">
+    <div className={`${containerBg} min-h-screen text-white/95`}>
       <Navbar timezone={timezone} />
       <SearchBar onSearch={handleCitySearch} onUseGps={handleUseGps} />
       <div className="max-w-6xl mx-auto">
-      {weatherLoading && <p className="loading">🌦️ Caricamento meteo...</p>}
-      {error && <p className="error">{error}</p>}
-      {weather && <WeatherCard weather={weather} city={city} timezone={timezone} />}
-    {/* CARD METEO + GRAFICO */}
-        <section className={`rounded-3xl border border-white/30 backdrop-blur-md shadow-[0_40px_100px_rgba(0,0,0,0.45)]
-                    p-6 flex flex-col gap-6
-                    ${containerBg}`}>
+        {weatherLoading && <p className="loading">🌦️ Caricamento meteo...</p>}
+        {error && <p className="error">{error}</p>}
+        {weather && <WeatherCard weather={weather} city={city} timezone={timezone} />}
+
+        {/* CARD METEO + GRAFICO */}
+        <section className="rounded-3xl border border-white/30 backdrop-blur-md shadow-[0_40px_100px_rgba(0,0,0,0.45)]
+                    p-6 flex flex-col gap-6">
           <Daily
             key={`${coords.lat},${coords.lon},${city}`}
             lat={coords.lat}
@@ -129,7 +167,7 @@ function App() {
         </footer>
       </div>
     </div>
-  )
+  );
 }
 
 export default App;
