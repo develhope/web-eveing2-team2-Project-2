@@ -173,7 +173,7 @@ function App() {
                      p-6 mt-8 flex flex-col gap-3"
         >
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-lg font-medium opacity-90">Radar precipitazioni</h3>
+            <h3 className="text-lg font-medium opacity-90">Mappa</h3>
             <span className="text-xs opacity-70">Clicca sulla mappa per cambiare zona</span>
           </div>
           <div className="h-[420px] overflow-hidden rounded-2xl border border-white/40 shadow-inner">
