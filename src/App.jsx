@@ -61,6 +61,31 @@ function App() {
   const handleUseGps = (coords) => {
     setCoordinates(coords);
   };
+    // Funzione per ottenere il nome città da coordinate (reverse geocoding)
+  async function reverseGeocodeSmart(lat, lon) {
+    try {
+      const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=it`;
+      const res = await fetch(url, {
+        headers: {
+          "User-Agent": "nuvolino-app/1.0",
+        },
+      });
+
+      if (!res.ok) throw new Error("Errore geocoding");
+      const data = await res.json();
+
+      return (
+        data.address.city ||
+        data.address.town ||
+        data.address.village ||
+        data.display_name?.split(",")[0] ||
+        "Posizione sconosciuta"
+      );
+    } catch (err) {
+      console.error("Errore reverse geocoding:", err);
+      return "Posizione sconosciuta";
+    }
+  }
 
   // Click sulla mappa → aggiorna coord + nome
   async function handleMapClick(lat, lon) {
@@ -86,12 +111,10 @@ function App() {
       <Navbar timezone={timezone} />
       <SearchBar onSearch={handleCitySearch} onUseGps={handleUseGps} />
       <div className="max-w-6xl mx-auto">
-{weatherLoading && (
-  <p className="loading my-6">
-    <img src="/favicon.png" alt="Caricamento" className="icon" />
-    Caricamento dati meteo...
-  </p>
-)}
+        {weatherLoading && (
+          <p className="loading my-6">
+            <img src="/favicon.png" alt="Caricamento" className="icon" />Caricamento dati meteo...</p>
+          )}
       {error && <p className="error">{error}</p>}
       {weather && <WeatherCard weather={weather} city={city} timezone={timezone} />}
     {/* CARD METEO + GRAFICO */}
