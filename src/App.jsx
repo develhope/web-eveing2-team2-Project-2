@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import SearchBar from './components/SearchBar';
 import WeatherCard from './components/WeatherCard';
 import useReverseGeocoding from './custom hooks/useReverseGeocoding';
+import Hourly from "./components/Hourly";
 import Daily from "./components/Daily";
 import DailyChart from "./components/DailyChart";
 import useWeather from './custom hooks/useWeather';
@@ -104,7 +105,27 @@ function App() {
     return ok.has(mood) ? `bg-mood-${mood}` : "bg-mood-clear";
   }, [mood]);
 
-  const tUnitLabel = units === "metric" ? "°C" : "°F";
+  const asArray = (x) => (Array.isArray(x) ? x : []);
+  const hourlyAll = asArray(weather?.hourlyNorm);
+  const dailyAll  = asArray(weather?.dailyNorm);
+
+  // Orario limitato a OGGI: da ora fino alle 23:59 locali.
+  const todayHourly = useMemo(() => {
+    if (!hourlyAll.length) return [];
+    try {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = now.getMonth();
+      const d = now.getDate();
+      const end = new Date(y, m, d, 23, 59, 59, 999);
+      return hourlyAll.filter(h => {
+        const t = new Date(h.iso);
+        return t.getFullYear() === y && t.getMonth() === m && t.getDate() === d && t <= end;
+      });
+    } catch {
+      return hourlyAll;
+    }
+  }, [hourlyAll]);
 
   return (
     <div className="min-h-screen text-white/95">
@@ -117,9 +138,17 @@ function App() {
           )}
       {error && <p className="error">{error}</p>}
       {weather && <WeatherCard weather={weather} city={city} timezone={timezone} />}
+      <section className={`rounded-3xl border border-white/30 bg-[rgba(255,255,255,0.18)] backdrop-blur-md shadow-[0_40px_100px_rgba(0,0,0,0.45)] p-6 mt-6 flex flex-col gap-6 ${containerBg}`}>
+          <Hourly
+            city={city}
+            units={units}
+            data={todayHourly}     // oggi fino alle 23
+            pageSize={5}          // 5 per pagina
+            onMoodChange={setMood}/>
+      </section>
     {/* CARD METEO + GRAFICO */}
         <section className={`rounded-3xl border border-white/30 backdrop-blur-md shadow-[0_40px_100px_rgba(0,0,0,0.45)]
-                    p-6 flex flex-col gap-6
+                    p-6 mt-6 flex flex-col gap-6
                     ${containerBg}`}>
           <Daily
             key={`${coords.lat},${coords.lon},${city}`}
