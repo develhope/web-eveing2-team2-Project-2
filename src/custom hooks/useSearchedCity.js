@@ -1,5 +1,10 @@
 import { useState } from "react";
 
+/**
+ * Ricerca coordinate da nome città.
+ * - Ritorna: { coordinates, searchError, loading, fetchCoordinates(cityName) }.
+ * - Usa headers corretti e lingua italiana.
+ */
 function useSearchedCity() {
   const [coordinates, setCoordinates] = useState(null);
   const [searchError, setSearchError] = useState("");
@@ -23,12 +28,11 @@ function useSearchedCity() {
         },
       });
 
-      if (!response.ok)
-        throw new Error("Errore durante la ricerca della città");
+      if (!response.ok) throw new Error("Errore durante la ricerca della città");
 
       const data = await response.json();
 
-      if (data.length === 0) {
+      if (!Array.isArray(data) || data.length === 0) {
         setSearchError("Città non trovata.");
         return;
       }

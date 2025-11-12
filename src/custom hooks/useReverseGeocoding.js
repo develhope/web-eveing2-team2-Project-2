@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 
+/**
+ * Reverse geocoding per ottenere il nome città dalle coordinate.
+ * - Minimizza i dati letti, usa header UA + lingua.
+ */
 function useReverseGeocoding(coordinates) {
   const [cityName, setCityName] = useState("");
   const [loading, setLoading] = useState(false);

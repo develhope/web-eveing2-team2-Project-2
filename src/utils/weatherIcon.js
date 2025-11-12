@@ -1,3 +1,4 @@
+/* Mappa codici OpenWeather (id, main) → icona testuale usata da <IconWeather />. */
 export function mapOWToIcon(id, main) {
   const code = Number(id) || 0;
   if (code >= 200 && code <= 232) return "storm";
@@ -12,12 +13,7 @@ export function mapOWToIcon(id, main) {
   if (m.includes("drizzle")) return "drizzle";
   if (m.includes("rain")) return "rain";
   if (m.includes("snow")) return "snow";
-<<<<<<< HEAD
   if (m.includes("mist") || m.includes("fog") || m.includes("haze")) return "mist";
-=======
-  if (m.includes("mist") || m.includes("fog") || m.includes("haze"))
-    return "mist";
->>>>>>> main
   if (m.includes("clear")) return "clear";
   if (m.includes("cloud")) return "clouds";
   return "clouds";

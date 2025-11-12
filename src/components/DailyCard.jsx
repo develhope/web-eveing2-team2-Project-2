@@ -1,6 +1,7 @@
 import React from "react";
 import IconWeather from "./IconWeather";
 
+/* Singola card giornaliera */
 export default function DailyCard({ label, iconType, tMax, tMin, pop, wind }) {
   return (
     <div className="hour-card w-[160px]">

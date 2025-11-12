@@ -1,22 +1,26 @@
-import { useState } from 'react';
-import "../styles/SearchBar.css";
-import useGeolocation from '../custom hooks/useGeolocation';
+import { useState } from "react";
+import useGeolocation from "../custom hooks/useGeolocation";
 
+/**
+ * Campo ricerca + pulsante GPS:
+ * - La ricerca delega completamente ad `onSearch`.
+ * - Il GPS usa l’hook `useGeolocation` e notifica le coords via `onUseGps`.
+ */
 function SearchBar({ onSearch, onUseGps }) {
-  const [city, setCity] = useState('');
-  const { isLocating, error, getLocation } = useGeolocation();
+  const [city, setCity] = useState("");
+  const { isLocating, error: geoError, getLocation } = useGeolocation();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (city.trim()) {
-      onSearch(city); // solo ricerca manuale
-      setCity('');
-    }
+    const q = city.trim();
+    if (!q) return;
+    if (onSearch) onSearch(q); // delega la fetch al parent
+    setCity("");
   };
 
   const handleGpsClick = async () => {
-    const coords = await getLocation(); // facciamo restituire le coords
-    if (coords) onUseGps(coords); // chiama App per gestire il flusso GPS
+    const coords = await getLocation();
+    if (coords && onUseGps) onUseGps(coords);
   };
 
   return (
@@ -26,6 +30,7 @@ function SearchBar({ onSearch, onUseGps }) {
         className="gps-button"
         onClick={handleGpsClick}
         disabled={isLocating}
+        title="Usa la tua posizione"
       >
         <i className="fa-solid fa-location-crosshairs"></i>
       </button>
@@ -40,7 +45,7 @@ function SearchBar({ onSearch, onUseGps }) {
         />
       </form>
 
-      {error && <p className="error">{error}</p>}
+      {geoError && <p className="error">{geoError}</p>}
     </div>
   );
 }

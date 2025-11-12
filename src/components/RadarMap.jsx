@@ -2,6 +2,7 @@ import React from "react";
 import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
+/** Handler click mappa: notifica lat/lon al parent. */
 function MapClickHandler({ onMapClick }) {
   useMapEvents({
     click(e) {
@@ -12,6 +13,11 @@ function MapClickHandler({ onMapClick }) {
   return null;
 }
 
+/**
+ * Mappa radar (OSM + layer RainViewer).
+ * - Center sulla posizione corrente (coords).
+ * - Click → callback al parent per aggiornare la zona.
+ */
 export default function RadarMap({ coords, onMapClick }) {
   if (!coords?.lat || !coords?.lon) return null;
 

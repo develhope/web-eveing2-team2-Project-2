@@ -1,3 +1,4 @@
+/*Etichetta italiana “user-friendly” per un tipo icona/meteo generico.*/
 export function itLabelFromType(type) {
   const t = (type || "").toLowerCase();
   if (t.includes("thunder")) return "Temporale";

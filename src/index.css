@@ -1,9 +1,11 @@
+/* ============== BASE ============== */
 @import "tailwindcss";
 
 :root { --font-ui: 'Inter', system-ui, -apple-system, Segoe UI, Roboto; }
 html, body, #root { height: 100%; }
-body { font-family: var(--font-ui); }
+body { font-family: var(--font-ui); margin:0; }
 
+/* Vetro/pannelli */
 .panel, .glass {
   background: rgba(255,255,255,0.10);
   border: 1px solid rgba(255,255,255,0.20);
@@ -14,6 +16,7 @@ body { font-family: var(--font-ui); }
 .panel { padding: 14px 16px; }
 .glass { padding: 16px; }
 
+/* Input */
 .input {
   width: 100%; padding: 10px 40px; border-radius: 14px;
   background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.20);
@@ -24,6 +27,7 @@ body { font-family: var(--font-ui); }
   box-shadow: 0 0 0 8px rgba(255,255,255,0.05) inset;
 }
 
+/* Pill */
 .pill {
   padding: 10px 14px; border-radius: 999px;
   background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.20);
@@ -31,8 +35,7 @@ body { font-family: var(--font-ui); }
 }
 .pill:hover { background: rgba(255,255,255,0.18); }
 
-.hint { color: rgba(255,255,255,0.80); }
-
+/* Skeleton */
 .skel {
   background: linear-gradient(90deg, rgba(255,255,255,.14), rgba(255,255,255,.10), rgba(255,255,255,.14));
   background-size: 200% 100%;
@@ -41,6 +44,7 @@ body { font-family: var(--font-ui); }
 }
 @keyframes sk { 0%{background-position:200% 0}100%{background-position:-200% 0} }
 
+/* Card giornaliera/oraria */
 .hour-card {
   padding: 12px; border-radius: 16px;
   background: rgba(255,255,255,0.12);
@@ -56,127 +60,223 @@ body { font-family: var(--font-ui); }
   box-shadow: 0 0 0 1px rgba(255,255,255,0.25) inset, 0 10px 26px rgba(0,0,0,0.2);
 }
 
-/* === SFONDI DINAMICI BASATI SUL METEO  === */
-
-.bg-mood-clear {
-  /* Sole: giallo → azzurro cielo */
-  background:
-    radial-gradient(900px 500px at 18% -10%, rgba(255,255,255,.35), transparent 60%),
-    linear-gradient(180deg, #FFE47A 0%, #FFD24D 22%, #7AD6FF 70%, #9AE0FF 100%);
+/* ============== TEMA & SFONDI ============== */
+:root {
+  --bg-day: linear-gradient(to bottom, #b3d4fc, #6baefc);
+  --bg-night: linear-gradient(to bottom, #0d1b2a, #1b263b);
+  --sun-color: #ffdc64;
+  --moon-color: #cfd8dc;
 }
 
-.bg-mood-clouds {
-  /* Parzialmente nuvoloso: celesti/azzurro-grigio */
-  background: linear-gradient(180deg, #5685a0 0%, #b8d5e8 50%, #9fbdd3 100%);
-}
-
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  background: linear-gradient(to bottom, #b3d4fc, #6baefc);
+/* Body = tema. Lo sfondo meteo si applica solo alle sezioni. */
+body:not(.dark-mode) {
+  background: var(--bg-day);
+  color: #0c2846;
   background-attachment: fixed;
-  background-repeat: no-repeat; 
+  background-repeat: no-repeat;
 }
-
-/* Modalità dark sul body */
 body.dark-mode {
   background: var(--bg-night);
   color: white;
   transition: background 1s ease, color 1s ease;
-}
-.bg-mood-rain {
-  /* Pioggia: blu medio-intenso */
-  background: linear-gradient(180deg, #3670aa 0%, #24548f 60%, #2f5e9c 100%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
 }
 
-.bg-mood-drizzle {
-  /* Pioviggine: azzurro tenue */
-  background: linear-gradient(180deg, #8cbad7 0%, #bfe4fb 100%);
+/* === SFONDI DINAMICI PER SEZIONI (non il body) === */
+.bg-mood-clear {
+  background:
+    radial-gradient(900px 500px at 18% -10%, rgba(255,255,255,.35), transparent 60%),
+    linear-gradient(180deg, #FFE47A 0%, #FFD24D 22%, #7AD6FF 70%, #9AE0FF 100%);
 }
-
-.bg-mood-snow {
-  /* Neve: bianco ghiaccio chiaro */
-  background: linear-gradient(180deg, #f4fbff 0%, #e2f3ff 50%, #d3ecfb 100%);
-}
-
-.bg-mood-storm {
-  /* Temporale: viola con sfumature blu */
-  background: linear-gradient(180deg, #a493ff 0%, #7f6de6 55%, #5e4fc0 100%);
-}
-
-.bg-mood-mist {
-  /* Nebbia: grigio-azzurro */
-  background: linear-gradient(180deg, #e7eef3 0%, #cfdbe3 60%, #bac9d4 100%);
-}
-
-.bg-mood-wind {
-  /* Vento: teal/azzurro luminoso */
-  background: linear-gradient(180deg, #c9f4ff 0%, #9ee6f3 55%, #7dd7e6 100%);
-}
-
-.bg-mood-night {
-  /* Notte serena: blu profondo con aloni */
+.bg-mood-clouds { background: linear-gradient(180deg, #5685a0 0%, #b8d5e8 50%, #9fbdd3 100%); }
+.bg-mood-rain   { background: linear-gradient(180deg, #3670aa 0%, #24548f 60%, #2f5e9c 100%); }
+.bg-mood-drizzle{ background: linear-gradient(180deg, #8cbad7 0%, #bfe4fb 100%); }
+.bg-mood-snow   { background: linear-gradient(180deg, #f4fbff 0%, #e2f3ff 50%, #d3ecfb 100%); }
+.bg-mood-storm  { background: linear-gradient(180deg, #a493ff 0%, #7f6de6 55%, #5e4fc0 100%); }
+.bg-mood-mist   { background: linear-gradient(180deg, #728b9e 0%, #7fa4bd 60%, #698598 100%); }
+.bg-mood-wind   { background: linear-gradient(180deg, #c9f4ff 0%, #9ee6f3 55%, #7dd7e6 100%); }
+.bg-mood-night  {
   background:
     radial-gradient(700px 320px at 16% -10%, rgba(255,255,255,.28), transparent 60%),
     linear-gradient(180deg, #153555 0%, #102a45 60%, #0c2237 100%);
 }
 
-/* Icone meteo */
-.weather-icon {
-  color: #69c7ff;
-  transition: all .3s ease;
-  width: 70px;
-  height: 70px;
-}
-.weather-icon:hover {
-  transform: scale(1.2);
-  filter: drop-shadow(0 0 10px rgba(255, 220, 80, .55));
-  color: #ffe173;
-}
-
-/* sole */
+/* ============== ICONE METEO ============== */
+.weather-icon { color: #69c7ff; transition: all .3s ease; width: 70px; height: 70px; }
+.weather-icon:hover { transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(255, 220, 80, .55)); color: #ffe173; }
 .sun-core { fill: #ffe173; transition: all .3s ease; }
-.sun-rays {
-  stroke: #ffd84f;
-  stroke-width: 1.6;
-  transform-origin: 12px 12px;
-  animation: rays 18s linear infinite;
-}
-.weather-icon:hover .sun-core { fill: #fff2a1; }
-@keyframes rays { from{transform:rotate(0)}to{transform:rotate(360deg)} }
-
-/* pioggia */
+.sun-rays { stroke:#ffd84f; stroke-width:1.6; transform-origin:12px 12px; animation:rays 18s linear infinite; }
+@keyframes rays { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+.weather-icon:hover .sun-core { fill:#fff2a1; }
 .rain-drop { stroke:#7ed0ff; animation:raindrop 1.25s ease-in infinite; }
 .rain-drop.d2{animation-delay:.2s}.rain-drop.d3{animation-delay:.4s}
-@keyframes raindrop{
-  0%{transform:translateY(0);opacity:.9}
-  100%{transform:translateY(6px);opacity:.3}
-}
+@keyframes raindrop{ 0%{transform:translateY(0);opacity:.9} 100%{transform:translateY(6px);opacity:.3} }
 .weather-icon:hover .rain-drop { stroke:#ffe173; }
-
-/* neve */
 .snow-flake { stroke:#b5e2ff; animation:snow 1.6s ease-in-out infinite alternate; }
 .snow-flake.d2{animation-delay:.2s}.snow-flake.d3{animation-delay:.4s}
-@keyframes snow{
-  0%{transform:translateY(0) rotate(0)}
-  100%{transform:translateY(5px) rotate(15deg)}
-}
-.weather-icon:hover .snow-flake { stroke:#ffe173; }
-
-/* fulmine */
+@keyframes snow{ 0%{transform:translateY(0) rotate(0)} 100%{transform:translateY(5px) rotate(15deg)} }
 .storm-bolt { fill:#a58cff; filter:drop-shadow(0 0 6px rgba(165,140,255,.35)); animation:bolt 1.8s ease-in-out infinite; }
 @keyframes bolt{0%,100%{opacity:.8}45%{opacity:1}}
 .weather-icon:hover .storm-bolt { fill:#ffe173; }
-
-/* nebbia */
 .mist-line { stroke:#a5b8c9; animation:mist 3s linear infinite; }
 @keyframes mist{0%{transform:translateX(0);opacity:.9}100%{transform:translateX(8px);opacity:.75}}
-.weather-icon:hover .mist-line { stroke:#ffe173; }
-
-/* glow */
 .icon-glow { filter: drop-shadow(0 0 8px rgba(255,230,130,.35)); animation:pulse 3s ease-in-out infinite; }
-@keyframes pulse {
-  0%,100%{filter:drop-shadow(0 0 8px rgba(255,230,130,.25))}
-  50%{filter:drop-shadow(0 0 14px rgba(255,230,130,.55))}
+@keyframes pulse { 0%,100%{filter:drop-shadow(0 0 8px rgba(255,230,130,.25))} 50%{filter:drop-shadow(0 0 14px rgba(255,230,130,.55))} }
+
+/* ============== NAVBAR (full width) ============== */
+.navbar {
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: linear-gradient(to top, #b3d4fc, #6baefc);
+  border-bottom: 1px solid rgba(255,255,255,0.25);
 }
+body.dark-mode .navbar { background: var(--bg-night); }
+
+.navbar-inner {
+  max-width: 1152px; /* ~max-w-6xl */
+  height: 84px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar-left, .navbar-center, .navbar-right { display:flex; align-items:center; }
+.navbar-center { flex: 1; justify-content: center; }
+.navbar-left  { min-width: 140px; }
+.navbar-right { gap: .5rem; min-width: 240px; justify-content: flex-end; }
+.navbar-logo  { height: 48px; width: auto; }
+
+/* Data/ora leggibile anche in light */
+body:not(.dark-mode) .navbar-right p { color: #0c2846; }
+
+/* ============== SEARCH BAR + GPS (dentro navbar) ============== */
+.navbar .search-container { display:flex; align-items:center; gap: .7rem; }
+
+.navbar .gps-button {
+  display:flex; align-items:center; justify-content:center;
+  width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(255,255,255,.2);
+  border: 1px solid rgba(255,255,255,.3);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(255,255,255,.2);
+  cursor: pointer; transition: all .2s ease;
+}
+.navbar .gps-button i { font-size: 1.05rem; }
+
+.navbar .search-bar {
+  display:flex; align-items:center;
+  height: 38px; padding: 0 .95rem; width: 420px;
+  background: rgba(255,255,255,.2);
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 22px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(255,255,255,.2);
+}
+.navbar .search-bar i { font-size:1.05rem; margin-right:.55rem; }
+.navbar .search-bar input {
+  border:none; background:transparent; width:100%;
+  font-size: 1rem; outline:none;
+}
+
+/* colori icone/placeholder */
+body:not(.dark-mode) .navbar .gps-button i,
+body:not(.dark-mode) .navbar .search-bar i,
+body:not(.dark-mode) .navbar .search-bar input,
+body:not(.dark-mode) .navbar .search-bar input::placeholder { color:#0c2846; }
+body.dark-mode .navbar .gps-button i,
+body.dark-mode .navbar .search-bar i,
+body.dark-mode .navbar .search-bar input,
+body.dark-mode .navbar .search-bar input::placeholder { color:white; }
+
+/* Responsive navbar */
+@media (max-width: 1023px) {
+  .navbar-inner { height:auto; flex-direction:column; gap:.6rem; padding:12px; }
+  .navbar-left, .navbar-right { width:100%; justify-content:space-between; }
+  .navbar-center { width:100%; justify-content:center; }
+  .navbar-logo { height:42px; }
+  .navbar .search-bar { width: min(92vw, 520px); }
+}
+
+/* ============== WEATHER CARD “ADESSO” ============== */
+.weather-container { display:flex; justify-content:center; align-items:center; margin:20px 0; }
+.weather-card {
+  position:relative; width: 100%; max-width:1280px; padding:24px; border-radius:20px;
+  background: rgba(255,255,255,0.15); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.18); font-family:"Inter",sans-serif; color:#fff;
+  box-shadow: 0 8px 32px rgba(31,38,135,.25);
+}
+body:not(.dark-mode) .weather-card { color:#0c2846; }
+body.dark-mode .weather-card { color:#fff; }
+
+.weather-top { position:relative; display:flex; justify-content:space-between; align-items:flex-start; width:100%; }
+.weather-info-left { display:flex; flex-direction:column; align-items:flex-start; }
+.weather-info-left h2 { font-size:2.2rem; font-weight:700; margin:0; line-height:1.1; }
+.weather-temp { font-size:1.8rem; font-weight:400; }
+.weather-status { font-size:1rem; opacity:.9; }
+
+.weather-icon-center { position:absolute; top:0; left:50%; transform:translateX(-50%); display:flex; justify-content:center; align-items:center; height:100%; }
+.weather-main-icon { width:60px; height:60px; }
+
+.weather-sun-right { position:absolute; top:0; right:0; display:flex; align-items:center; justify-content:flex-end; gap:10px; }
+.sun-icon { width:30px; height:auto; }
+.sun-times { display:flex; flex-direction:column; align-items:flex-start; font-size:.8rem; opacity:.9; line-height:1.3; }
+
+.weather-details { margin-top:24px; display:grid; grid-template-columns: repeat(5,1fr); gap:10px 16px; font-size:.9rem; opacity:.95; width:100%; text-align:left; }
+.weather-details div { display:flex; align-items:center; gap:6px; justify-content:flex-start; white-space:nowrap; }
+
+/* ============== TOGGLE LIGHT/DARK (a destra in navbar) ============== */
+.toggle {
+  width: 84px; height: 35px; border-radius: 50px;
+  position: relative; cursor: pointer; overflow: hidden;
+  box-shadow: inset 0 3px 10px rgba(0,0,0,.2);
+  transition: background 1s ease;
+  margin-left: .5rem; /* affiancato a destra dell’orario */
+}
+.sky { position:absolute; inset:0; background: var(--bg-day); transition: background 1s ease; }
+body.dark-mode .sky { background: linear-gradient(to top, #1c3047, #0b1018); }
+
+.circle {
+  position:absolute; top:50%; left:10px; transform:translateY(-50%);
+  width:31.5px; height:31.5px; border-radius:50%;
+  background: var(--sun-color); box-shadow:0 0 15px rgba(255,220,100,.7);
+  transition: all 1s ease;
+}
+body.dark-mode .circle { left:55px; background: var(--moon-color); box-shadow:0 0 10px rgba(255,255,255,.5); }
+
+.clouds {
+  position:absolute; top:60%; left:0; width:200%; height:100%;
+  background: radial-gradient(white 40%, transparent 41%) 0 0 / 50px 50px repeat-x;
+  opacity:.5; animation: moveClouds 20s linear infinite; transition: opacity 1s ease;
+}
+@keyframes moveClouds { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+body.dark-mode .clouds { opacity:0; }
+
+.stars, .stars2 {
+  position:absolute; width:300%; height:200%; top:-50%; left:-100%;
+  opacity:0; pointer-events:none; transition: opacity 1s ease;
+}
+body.dark-mode .stars, body.dark-mode .stars2 { opacity:1; visibility:visible; }
+.stars  { background-image: radial-gradient(white 1px, transparent 1px); background-size:50px 50px; animation: moveStars1 25s linear infinite; filter:brightness(1.2); visibility:hidden; }
+.stars2 { background-image: radial-gradient(white 1px, transparent 1px); background-size:70px 70px; animation: moveStars2 60s linear infinite; opacity:.8; filter:brightness(.8); visibility:hidden; }
+.stars::after, .stars2::after {
+  content:""; position:absolute; inset:0;
+  background-image: radial-gradient(white 1px, transparent 1px);
+  background-size:50px 50px; opacity:.6; mix-blend-mode:screen; animation: twinkleRandom 6s ease-in-out infinite;
+}
+@keyframes moveStars1 { from{transform:translate(0,0)} to{transform:translate(-150px,20px)} }
+@keyframes moveStars2 { from{transform:translate(0,0)} to{transform:translate(-80px,-10px)} }
+@keyframes twinkleRandom {
+  0%{opacity:.4; filter:brightness(.9)} 25%{opacity:.9; filter:brightness(1.6)}
+  50%{opacity:.5; filter:brightness(1)} 75%{opacity:.8; filter:brightness(1.3)}
+  100%{opacity:.4; filter:brightness(.9)}
+}
+
+/* piccoli aiuti */
+.loading{opacity:.9}
+.error{color:#ffdddd; background:rgba(255,0,0,.15); border:1px solid rgba(255,0,0,.25); padding:.5rem .75rem; border-radius:.75rem}
+.hint{opacity:.75}

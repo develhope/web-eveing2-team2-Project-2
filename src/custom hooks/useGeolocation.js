@@ -1,5 +1,9 @@
 import { useState } from "react";
 
+/**
+ * Hook per ottenere la posizione corrente (Geolocation API).
+ * Ritorna: { isLocating, error, getLocation() -> Promise<{lat,lon}|null> }.
+ */
 function useGeolocation() {
   const [isLocating, setIsLocating] = useState(false);
   const [error, setError] = useState("");

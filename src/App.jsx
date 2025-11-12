@@ -1,193 +1,150 @@
-import { useState, useEffect, useMemo } from 'react';
-import SearchBar from './components/SearchBar';
-import WeatherCard from './components/WeatherCard';
-import useReverseGeocoding from './custom hooks/useReverseGeocoding';
+import React, { useEffect, useMemo, useState, useCallback } from "react";
+
+// --- Layout: Navbar (SearchBar + GPS + toggle) + card corrente
+import Navbar from "./components/Navbar";
+import WeatherCard from "./components/WeatherCard";
+
+// --- Hooks: ricerca coord, reverse geocoding, meteo centralizzato
+import useSearchedCity from "./custom hooks/useSearchedCity";
+import useReverseGeocoding from "./custom hooks/useReverseGeocoding";
+import useWeather from "./custom hooks/useWeather.js";
+
+// --- Sezioni: ora-per-ora, 10-giorni + grafico, mappa radar
+import Hourly from "./components/Hourly";
 import Daily from "./components/Daily";
 import DailyChart from "./components/DailyChart";
-import useWeather from './custom hooks/useWeather';
 import RadarMap from "./components/RadarMap";
-import useSearchedCity from './custom hooks/useSearchedCity';
-import './index.css';
-import Navbar from './components/Navbar';
 
-function App() {
-  const [coordinates, setCoordinates] = useState(null);
-  const [city, setCity] = useState('');
-  const [error, setError] = useState('');
+// --- Stili globali
+import "./index.css";
 
+export default function App() {
+  // Default Roma
+  const [coordinates, setCoordinates] = useState({ lat: 41.9028, lon: 12.4964 });
+  const [city, setCity] = useState("Roma");
+  const [units] = useState("metric");
+  const [error, setError] = useState("");
+
+  // ============ SFONDO ============
+  // Lo sfondo meteo NON segue “Adesso”.
+  // Cambia solo quando si passa con il mouse sui prossimi giorni (e/o sull’orario se abilitato).
+  const [hoverMood, setHoverMood] = useState(null);
+
+  // Dati per il grafico: arrivano direttamente dal componente Daily.
+  const [daysDataForChart, setDaysDataForChart] = useState([]);
+
+  // Ricerca per città
   const { coordinates: searchedCoordinates, searchError, fetchCoordinates } = useSearchedCity();
+
+  // Reverse geocoding (da GPS/click mappa) → city name
   const { cityName, geoError } = useReverseGeocoding(coordinates);
+
+  // Fetch meteo centralizzata (current + hourly + daily)
   const { weather, timezone, weatherError, loading: weatherLoading } = useWeather(coordinates);
-  const [coords, setCoords] = useState({ lat: 41.9028, lon: 12.4964 });
-  const [units, setUnits] = useState("metric");
-  const [mood, setMood] = useState("clear");
-  const [daysData, setDaysData] = useState([]);
 
-
-  // Se vengono trovate nuove coordinate da ricerca manuale
+  // Aggiorna coords quando viene scelta una città dalla search.
   useEffect(() => {
-    if (searchedCoordinates) {
-      setCoordinates(searchedCoordinates);
-    }
+    if (searchedCoordinates) setCoordinates(searchedCoordinates);
   }, [searchedCoordinates]);
 
-  // Se arriva il nome città dal reverse geocoding (GPS)
+  // Aggiorna label città quando cambia da reverse geocoding.
   useEffect(() => {
     if (cityName) setCity(cityName);
   }, [cityName]);
 
-  // Gestione errori
+  // Errore unico visualizzato in pagina (search/reverse/weather).
   useEffect(() => {
-    setError(searchError || geoError || weatherError || '');
+    setError(searchError || geoError || weatherError || "");
   }, [searchError, geoError, weatherError]);
 
-  const handleCitySearch = (searchedCity) => {
-    fetchCoordinates(searchedCity);
-  };
+  // Handlers stabili
+  const handleCitySearch   = useCallback((q) => fetchCoordinates(q), [fetchCoordinates]);
+  const handleUseGps       = useCallback((coords) => setCoordinates(coords), []);
+  const handleMapClick     = useCallback((lat, lon) => setCoordinates({ lat, lon }), []);
+  const handleDailyData    = useCallback((arr) => setDaysDataForChart(arr || []), []);
+  const handleForecastMood = useCallback((m) => setHoverMood(m), []);
 
-  const handleUseGps = (coords) => {
-    setCoordinates(coords);
-  };
-
-// --- helper per formattare Paese in IT (da codice ISO) ---
-  const regionNamesIT =
-  typeof Intl !== "undefined" && Intl.DisplayNames
-    ? new Intl.DisplayNames(["it"], { type: "region" })
-    : null;
-// --- REVERSE GEOCODING con fallback multiplo ---
-async function reverseGeocodeSmart(lat, lon) {
-  // 1) Open-Meteo Reverse
-  try {
-    const res = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=it&count=1`,
-      { headers: { Accept: "application/json" } }
-    );
-    const data = await res.json();
-    const r = data?.results?.[0];
-    if (r) {
-      const country =
-        (r.country_code &&
-          regionNamesIT &&
-          regionNamesIT.of(String(r.country_code).toUpperCase())) ||
-        r.country ||
-        null;
-      const city = r.name || r.admin2 || r.admin1 || null;
-      if (city && country) {
-        // Evita doppioni tipo "Roma (Italia)" se già presente
-        return city.includes(country) ? city : `${city} (${country})`;
-      }
-      if (city) return city;
-      if (country) return country;
-    }
-  } catch (e) {
-    // ignora, passa al prossimo fallback
-    console.warn("Reverse OM fallito:", e);
-  }
-
-  // 2) Nominatim (OpenStreetMap)
-  try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`,
-      {
-        headers: {
-          Accept: "application/json",
-          // user-agent “gentile”: evita rate limit
-          "User-Agent": "Nuvolino/1.0 (+https://example.com)",
-          Referer: "https://example.com",
-        },
-      }
-    );
-    const d = await res.json();
-    const a = d?.address || {};
-    const city =
-      a.city ||
-      a.town ||
-      a.village ||
-      a.municipality ||
-      a.county ||
-      a.state ||
-      null;
-    const country = a.country || null;
-    if (city && country) return `${city} (${country})`;
-    if (city) return city;
-    if (country) return country;
-  } catch (e) {
-    console.warn("Reverse Nominatim fallito:", e);
-  }
-
-  // 3) fallback finale
-  return null;
-}
-  // Click sulla mappa → aggiorna coord + nome
-  async function handleMapClick(lat, lon) {
-    setCoords({ lat, lon });
-    setCity("Aggiornamento…");
-    const label = await reverseGeocodeSmart(lat, lon);
-    setCity(label || `Lat ${lat.toFixed(2)}, Lon ${lon.toFixed(2)}`);
-  }
-
-  // Sfondo dinamico dal mood (clear|clouds|rain|...)
+  // Bg sezione solo quando c'è hover dei forecast (priorità alla dark-mode del body).
   const containerBg = useMemo(() => {
-    const ok = new Set([
-      "clear", "clouds", "rain", "drizzle",
-      "snow", "storm", "mist", "wind", "night",
-    ]);
-    return ok.has(mood) ? `bg-mood-${mood}` : "bg-mood-clear";
-  }, [mood]);
+    if (!hoverMood) return "";
+    const ok = new Set(["clear", "clouds", "rain", "drizzle", "snow", "storm", "mist", "wind", "night"]);
+    return ok.has(hoverMood) ? `bg-mood-${hoverMood}` : "";
+  }, [hoverMood]);
 
-  const tUnitLabel = units === "metric" ? "°C" : "°F";
+  // ====== DATI PER FIGLI ======
+  // Helper per evitare undefined
+  const asArray = (x) => (Array.isArray(x) ? x : []);
+  const hourlyAll = asArray(weather?.hourlyNorm);
+  const dailyAll  = asArray(weather?.dailyNorm);
+
+  // Orario limitato a OGGI: da ora fino alle 23:59 locali.
+  const todayHourly = useMemo(() => {
+    if (!hourlyAll.length) return [];
+    try {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = now.getMonth();
+      const d = now.getDate();
+      const end = new Date(y, m, d, 23, 59, 59, 999);
+      return hourlyAll.filter(h => {
+        const t = new Date(h.iso);
+        return t.getFullYear() === y && t.getMonth() === m && t.getDate() === d && t <= end;
+      });
+    } catch {
+      return hourlyAll;
+    }
+  }, [hourlyAll]);
 
   return (
-    <div className={`${containerBg} min-h-screen text-white/95`}>
+    <div className={`min-h-screen text-white/95`}>
+      {/* NAVBAR full-width (SearchBar + GPS centrati, toggle a destra) */}
+      <Navbar timezone={timezone} onSearch={handleCitySearch} onUseGps={handleUseGps} />
+
+      {/* wrapper centrale delle sezioni */}
       <div className="max-w-6xl mx-auto px-4 py-6">
-      <Navbar timezone={timezone} />
-      {weatherLoading && <p className="loading">🌦️ Caricamento meteo...</p>}
-      <SearchBar onSearch={handleCitySearch} onUseGps={handleUseGps} />
-      {error && <p className="error">{error}</p>}
-      {weather && <WeatherCard weather={weather} city={city} timezone={timezone} />}
-    {/* CARD METEO + GRAFICO */}
-        <section
-          className="rounded-3xl border border-white/30 bg-[rgba(255,255,255,0.18)]
-                     backdrop-blur-md shadow-[0_40px_100px_rgba(0,0,0,0.45)]
-                     p-6 flex flex-col gap-6"
-        >
-          <Daily
-            key={`${coords.lat},${coords.lon},${city}`}
-            lat={coords.lat}
-            lon={coords.lon}
+        {weatherLoading && <p className="loading">🌦️ Caricamento meteo...</p>}
+        {error && <p className="error">{error}</p>}
+
+        {/* CARD "Adesso" — NON influenza lo sfondo */}
+        {weather && <WeatherCard weather={weather} city={city} timezone={timezone} />}
+
+        {/* ORA PER ORA (5 card per pagina). Per disattivare lo sfondo su hover: togli onMoodChange. */}
+        <section className={`rounded-3xl border border-white/30 bg-[rgba(255,255,255,0.18)] backdrop-blur-md shadow-[0_40px_100px_rgba(0,0,0,0.45)] p-6 mt-6 flex flex-col gap-6 ${containerBg}`}>
+          <Hourly
             city={city}
             units={units}
-            lang="it"
-            pageSize={5}
-            onMoodChange={setMood}
-            onData={setDaysData}
-            iconLayout="center"
-            iconSize={28}
+            data={todayHourly}     // oggi fino alle 23
+            pageSize={5}          // 5 per pagina
+            onMoodChange={handleForecastMood}
           />
-          <DailyChart days={daysData} units={units} />
+        </section>
+
+        {/* PROSSIMI 10 GIORNI + GRAFICO (usa esattamente i dati rimandati da Daily) */}
+        <section className={`rounded-3xl border border-white/30 bg-[rgba(255,255,255,0.18)] backdrop-blur-md shadow-[0_40px_100px_rgba(0,0,0,0.45)] p-6 mt-6 flex flex-col gap-6 ${containerBg}`}>
+          <Daily
+            city={city}
+            units={units}
+            pageSize={5}
+            data={dailyAll}
+            onMoodChange={handleForecastMood}
+            onData={handleDailyData}
+          />
+          <DailyChart days={daysDataForChart} units={units} />
         </section>
 
         {/* MAPPA RADAR */}
-        <section
-          className="rounded-3xl border border-white/30 bg-[rgba(255,255,255,0.18)]
-                     backdrop-blur-md shadow-[0_40px_100px_rgba(0,0,0,0.45)]
-                     p-6 mt-8 flex flex-col gap-3"
-        >
+        <section className="rounded-3xl border border-white/30 bg-[rgba(255,255,255,0.18)] backdrop-blur-md shadow-[0_40px_100px_rgba(0,0,0,0.45)] p-6 mt-8 flex flex-col gap-3">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-lg font-medium opacity-90">Radar precipitazioni</h3>
+            <h3 className="text-lg font-medium opacity-90">Mappa</h3>
             <span className="text-xs opacity-70">Clicca sulla mappa per cambiare zona</span>
           </div>
           <div className="h-[420px] overflow-hidden rounded-2xl border border-white/40 shadow-inner">
-            <RadarMap coords={coords} onMapClick={handleMapClick} />
+            <RadarMap coords={coordinates} onMapClick={handleMapClick} />
           </div>
         </section>
 
-        <footer className="mt-6 text-center text-xs hint">
-          © {new Date().getFullYear()} Nuvolino
-        </footer>
+        <footer className="mt-6 text-center text-xs hint">© {new Date().getFullYear()} Nuvolino</footer>
       </div>
     </div>
-  )
+  );
 }
-
-export default App

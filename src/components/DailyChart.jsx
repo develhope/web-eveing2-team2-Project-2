@@ -11,14 +11,20 @@ import {
   ReferenceLine,
 } from "recharts";
 
+/**
+ * Grafico 10 giorni (linee T max/min + barre % pioggia).
+ * Accetta dati già normalizzati in `days` o in fallback `data`.
+ */
 export default function DailyChart({ days = [], data = [], units = "metric" }) {
   const tempSuffix = units === "metric" ? "°C" : "°F";
 
+  // Formattatore per etichetta asse X (es: "mer 12")
   const dayFmt = useMemo(
     () => new Intl.DateTimeFormat("it-IT", { weekday: "short", day: "2-digit" }),
     []
   );
 
+  // Mappa i dati in un array omogeneo per Recharts (max 10 punti).
   const mapped = useMemo(() => {
     if (Array.isArray(days) && days.length) {
       return days.slice(0, 10).map((d) => {
@@ -31,6 +37,7 @@ export default function DailyChart({ days = [], data = [], units = "metric" }) {
         };
       });
     }
+    // fallback compatibilità: struttura tipo OpenWeather "daily"
     return (Array.isArray(data) ? data : []).slice(0, 10).map((d) => ({
       d: dayFmt.format(new Date((d.dt || 0) * 1000)),
       tmax: safeRound(d?.temp?.max),
@@ -39,6 +46,7 @@ export default function DailyChart({ days = [], data = [], units = "metric" }) {
     }));
   }, [days, data, dayFmt]);
 
+  // Range Y sinistra (temperature): espando di ±1 e includo 0.
   const [yMin, yMax] = useMemo(() => {
     if (!mapped.length) return [0, 1];
     const arr = mapped.flatMap((x) => [x.tmin, x.tmax]).filter(isFinite);

@@ -1,5 +1,9 @@
 import React from "react";
 
+/**
+ * Icone meteo vettoriali (animate) con className esterna per dimensioni/colore.
+ * Il prop `type` è una delle mood: "clear","clouds","rain","drizzle","snow","storm","mist","wind".
+ */
 export default function IconWeather({
   type = "clouds",
   className = "w-8 h-8 weather-icon",
