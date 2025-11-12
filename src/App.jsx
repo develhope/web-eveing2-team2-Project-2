@@ -49,6 +49,75 @@ function App() {
     setCoordinates(coords);
   };
 
+// --- helper per formattare Paese in IT (da codice ISO) ---
+  const regionNamesIT =
+  typeof Intl !== "undefined" && Intl.DisplayNames
+    ? new Intl.DisplayNames(["it"], { type: "region" })
+    : null;
+// --- REVERSE GEOCODING con fallback multiplo ---
+async function reverseGeocodeSmart(lat, lon) {
+  // 1) Open-Meteo Reverse
+  try {
+    const res = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=it&count=1`,
+      { headers: { Accept: "application/json" } }
+    );
+    const data = await res.json();
+    const r = data?.results?.[0];
+    if (r) {
+      const country =
+        (r.country_code &&
+          regionNamesIT &&
+          regionNamesIT.of(String(r.country_code).toUpperCase())) ||
+        r.country ||
+        null;
+      const city = r.name || r.admin2 || r.admin1 || null;
+      if (city && country) {
+        // Evita doppioni tipo "Roma (Italia)" se già presente
+        return city.includes(country) ? city : `${city} (${country})`;
+      }
+      if (city) return city;
+      if (country) return country;
+    }
+  } catch (e) {
+    // ignora, passa al prossimo fallback
+    console.warn("Reverse OM fallito:", e);
+  }
+
+  // 2) Nominatim (OpenStreetMap)
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`,
+      {
+        headers: {
+          Accept: "application/json",
+          // user-agent “gentile”: evita rate limit
+          "User-Agent": "Nuvolino/1.0 (+https://example.com)",
+          Referer: "https://example.com",
+        },
+      }
+    );
+    const d = await res.json();
+    const a = d?.address || {};
+    const city =
+      a.city ||
+      a.town ||
+      a.village ||
+      a.municipality ||
+      a.county ||
+      a.state ||
+      null;
+    const country = a.country || null;
+    if (city && country) return `${city} (${country})`;
+    if (city) return city;
+    if (country) return country;
+  } catch (e) {
+    console.warn("Reverse Nominatim fallito:", e);
+  }
+
+  // 3) fallback finale
+  return null;
+}
   // Click sulla mappa → aggiorna coord + nome
   async function handleMapClick(lat, lon) {
     setCoords({ lat, lon });

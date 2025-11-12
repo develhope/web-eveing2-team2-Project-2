@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { DateTime } from "luxon";
 import logo from "../assets/logo.svg";
 import logoDark from "../assets/logo-dark.svg";
 import "../styles/Navbar.css";
 import ToggleLightDark from "./ToggleLightDark";
+
 
 function Navbar({ timezone }) {
   const [localTime, setLocalTime] = useState("");

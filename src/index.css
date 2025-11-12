@@ -84,6 +84,7 @@ body.dark-mode {
   background: var(--bg-night);
   color: white;
   transition: background 1s ease, color 1s ease;
+}
 .bg-mood-rain {
   /* Pioggia: blu medio-intenso */
   background: linear-gradient(180deg, #3670aa 0%, #24548f 60%, #2f5e9c 100%);

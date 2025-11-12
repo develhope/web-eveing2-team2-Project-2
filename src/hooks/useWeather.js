@@ -1,12 +1,12 @@
-import { useState } from "react";
+ /* import { useState } from "react";
 
 export default function useWeather() {
-  const [coords, setCoords] = useState({ lat: 41.9, lon: 12.5, label: "Roma" });
-  const [meteo, setMeteo] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState(null);
+  const [ setCoords] = useState({ lat: 41.9, lon: 12.5, label: "Roma" });
+  const [ setMeteo] = useState(null);
+  const [setLoading] = useState(false);
+  const [ setErr] = useState(null);
 
-  // Ricerca per città
+  Ricerca per città
   async function fetchByCity(city) {
     try {
       setLoading(true);
@@ -23,6 +23,7 @@ export default function useWeather() {
       setLoading(false);
     }
   }
+
 
   // Ricerca per coordinate (clic mappa o GPS)
   async function fetchByCoords(lat, lon, label = "Posizione selezionata") {
@@ -41,21 +42,5 @@ export default function useWeather() {
       setLoading(false);
     }
   }
-
-  // Pulsante GPS
-  function geolocalizza() {
-    if (!navigator.geolocation) {
-      alert("Geolocalizzazione non supportata");
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords;
-        fetchByCoords(latitude, longitude, "Posizione attuale");
-      },
-      () => alert("Impossibile ottenere la posizione")
-    );
-  }
-
-  return { coords, meteo, loading, err, fetchByCity, fetchByCoords, geolocalizza };
 }
+  */
