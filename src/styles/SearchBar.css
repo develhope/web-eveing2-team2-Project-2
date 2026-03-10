@@ -2,7 +2,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.7rem;
 }
 
 .gps-button {
@@ -12,15 +11,14 @@
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(12px);
   border-radius: 50%;
-  width: 45px;
-  height: 45px;
+  width: 35px;
+  height: 35px;
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 .gps-button i {
-  color: white;
   font-size: 1.1rem;
 }
 
@@ -31,15 +29,14 @@
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(12px);
   border-radius: 20px;
-  padding: 0.6rem 1rem;
-  width: 350px;
+  height: 35px;
+  padding: 0 1rem;
   box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 /* Icona Font Awesome */
 .search-bar i {
-  color: white;
   font-size: 1.1rem;
   margin-right: 0.5rem;
 }
@@ -48,13 +45,44 @@
 .search-bar input {
   border: none;
   background: transparent;
-  color: white;
   width: 100%;
   font-size: 1rem;
   outline: none;
 }
+/* Icone e placeholder in modalità light */
+body:not(.dark-mode) .gps-button i,
+body:not(.dark-mode) .search-bar i,
+body:not(.dark-mode) .search-bar input,
+body:not(.dark-mode) .search-bar input::placeholder {
+  color: #0c2846;
+}
 
-.search-bar input::placeholder {
-  color: rgb(255, 255, 255);
+/* Icone e placeholder in modalità dark */
+body.dark-mode .gps-button i,
+body.dark-mode .search-bar i,
+body.dark-mode .search-bar input,
+body.dark-mode .search-bar input::placeholder {
+  color: white;
+}
+
+@media screen and (max-width: 1023px) {
+  .search-container {
+    position: fixed;
+    top: auto;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    top: 80px;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .search-container {
+    position: fixed;
+    left: 50%;
+    top: 22.5px;
+    transform: translateX(-50%);
+    z-index: 100;
+  }
 }
 

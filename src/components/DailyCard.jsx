@@ -13,8 +13,8 @@ export default function DailyCard({ label, iconType, tMax, tMin, pop, wind }) {
         <div className="h-full rounded-full" style={{ width:"100%", background:"linear-gradient(90deg, rgba(255,255,255,.15), rgba(255,255,255,.35))"}} />
       </div>
       <div className="mt-3 grid gap-1 text-[11px] hint">
-        <div>🌧 {pop}%</div>
-        <div>💨 {wind}</div>
+        <div>{pop}%</div>
+        <div>{wind}</div>
       </div>
     </div>
   );

@@ -19,7 +19,7 @@
 }
 
 .toggle.dark .sky {
-  background: linear-gradient(to bottom, #0d1b2a, #1b263b);
+  background: linear-gradient(to top, #1c3047, #0b1018);
 }
 
 /* Sole / Luna */
@@ -27,8 +27,8 @@
   position: absolute;
   top: 50%;
   left: 10px;
-  width: 45px;
-  height: 45px;
+  width: 31.5px;
+  height: 31.5px;
   border-radius: 50%;
   background: var(--sun-color);
   transform: translateY(-50%);
@@ -37,7 +37,7 @@
 }
 
 .toggle.dark .circle {
-  left: 80px;
+  left: 55px;
   background: var(--moon-color);
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
@@ -192,7 +192,6 @@
 }
 
 .navbar .toggle {
-  width: 120px;
-  height: 50px;
-  transform: scale(0.7);
+  width: 84px;
+  height: 35px;
 }

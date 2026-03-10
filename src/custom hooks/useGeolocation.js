@@ -6,15 +6,21 @@ function useGeolocation() {
 
   const getLocation = () => {
     return new Promise((resolve) => {
-      setIsLocating(true);
-      setError("");
-
       if (!navigator.geolocation) {
         setError("Geolocalizzazione non supportata dal browser.");
-        setIsLocating(false);
         resolve(null);
         return;
       }
+
+      setIsLocating(true);
+      setError(null);
+
+      // Timeout di sicurezza (max 10 secondi)
+      const options = {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      };
 
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -25,11 +31,13 @@ function useGeolocation() {
           setIsLocating(false);
           resolve(coords);
         },
-        () => {
-          setError("Impossibile ottenere la posizione.");
+        (err) => {
+          console.error("Errore nella geolocalizzazione:", err);
+          setError("Impossibile determinare la posizione.");
           setIsLocating(false);
           resolve(null);
-        }
+        },
+        options
       );
     });
   };
