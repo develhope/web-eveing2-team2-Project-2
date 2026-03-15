@@ -27,11 +27,15 @@ function Navbar({ timezone }) {
     if (!timezone) return;
 
     const updateLocalTime = () => {
-      const now = DateTime.now()
-        .setZone(timezone)
-        .setLocale("it")
-        .toFormat("EEEE d LLLL, HH:mm");
-      setLocalTime(now);
+      const now = DateTime.now().setZone(timezone).setLocale("it");
+
+      const isSmall = window.matchMedia("(max-width: 767px)").matches;
+
+      const formatted = isSmall
+        ? now.toFormat("EEE d LLLL, HH:mm")   // "Dom 15 Marzo, 12:25"
+        : now.toFormat("EEEE d LLLL, HH:mm");  // "Domenica 15 Marzo, 12:25"
+
+      setLocalTime(formatted);
     };
 
     updateLocalTime();
@@ -42,18 +46,18 @@ function Navbar({ timezone }) {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-      <div className="navbar-left">
-        <img
-          src={isDark ? logoDark : logo}
-          alt="Nuvolino logo"
-          className="navbar-logo"
-        />
-      </div>
+        <div className="navbar-left">
+          <img
+            src={isDark ? logoDark : logo}
+            alt="Nuvolino logo"
+            className="navbar-logo"
+          />
+        </div>
 
-      <div className="navbar-right">
-        <p style={{ textTransform: "capitalize" }}>{localTime}</p>
-        <ToggleLightDark isDark={isDark} toggleMode={toggleMode} />
-      </div>
+        <div className="navbar-right">
+          <p style={{ textTransform: "capitalize" }}>{localTime}</p>
+          <ToggleLightDark isDark={isDark} toggleMode={toggleMode} />
+        </div>
       </div>
     </nav>
   );

@@ -1,78 +1,121 @@
 @import "tailwindcss";
 
-:root { --font-ui: 'Inter', system-ui, -apple-system, Segoe UI, Roboto; }
-html, body, #root { height: 100%; }
-body { font-family: var(--font-ui); }
+:root {
+  --font-ui: 'Inter', system-ui, -apple-system, Segoe UI, Roboto;
+}
 
-.panel, .glass {
-  background: rgba(255,255,255,0.10);
-  border: 1px solid rgba(255,255,255,0.20);
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-ui);
+}
+
+.panel,
+.glass {
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.20);
   backdrop-filter: blur(12px);
   border-radius: 18px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
 }
-.panel { padding: 14px 16px; }
-.glass { padding: 16px; }
+
+.panel {
+  padding: 14px 16px;
+}
+
+.glass {
+  padding: 16px;
+}
 
 .input {
-  width: 100%; padding: 10px 40px; border-radius: 14px;
-  background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.20);
-  outline: none; transition: all .2s;
+  width: 100%;
+  padding: 10px 40px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  outline: none;
+  transition: all .2s;
 }
+
 .input:focus {
-  border-color: rgba(255,255,255,0.35);
-  box-shadow: 0 0 0 8px rgba(255,255,255,0.05) inset;
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.05) inset;
 }
 
 .pill {
-  padding: 10px 14px; border-radius: 999px;
-  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.20);
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.20);
   transition: all .2s;
 }
-.pill:hover { background: rgba(255,255,255,0.18); }
+
+.pill:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
 
 .skel {
-  background: linear-gradient(90deg, rgba(255,255,255,.14), rgba(255,255,255,.10), rgba(255,255,255,.14));
+  background: linear-gradient(90deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, .10), rgba(255, 255, 255, .14));
   background-size: 200% 100%;
   animation: sk 1.4s infinite linear;
   border-radius: 12px;
 }
-@keyframes sk { 0%{background-position:200% 0}100%{background-position:-200% 0} }
+
+@keyframes sk {
+  0% {
+    background-position: 200% 0
+  }
+
+  100% {
+    background-position: -200% 0
+  }
+}
 
 .hour-card {
-  padding: 12px; border-radius: 16px;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.18);
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   transition: all .25s ease;
 }
+
 .hour-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
-  border-color: rgba(255,255,255,0.28);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  border-color: rgba(255, 255, 255, 0.28);
 }
+
 .hour-card--now {
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.25) inset, 0 10px 26px rgba(0,0,0,0.2);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25) inset, 0 10px 26px rgba(0, 0, 0, 0.2);
 }
 
 :root {
   --bg-day: linear-gradient(to top, #a0d8ff, #b0e0ff);
   --bg-night: linear-gradient(to bottom, #0d1b2a, #1b263b);
   --sun-color: #ffdc64;
-  --moon-color: #cfd8dc; 
+  --moon-color: #cfd8dc;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
 }
+
 /* Tema chiaro */
 body:not(.dark-mode) {
   background: linear-gradient(to bottom, #b3d4fc, #6baefc);
-  color:#0c2846;
+  color: #0c2846;
   background-attachment: fixed;
-  background-repeat: no-repeat; 
+  background-repeat: no-repeat;
 }
+
 /* Modalità dark sul body */
 body.dark-mode {
   background: var(--bg-night);
@@ -81,6 +124,7 @@ body.dark-mode {
   background-attachment: fixed;
   background-repeat: no-repeat;
 }
+
 /* Testo e icona loading */
 .loading {
   display: flex;
@@ -88,17 +132,21 @@ body.dark-mode {
   justify-content: center;
   gap: 0.5rem;
 }
+
 .icon {
   width: 16px;
   height: 16px;
 }
-body:not(.dark-mode) .loading {color:#0c2846;}
+
+body:not(.dark-mode) .loading {
+  color: #0c2846;
+}
 
 /* === SFONDI DINAMICI BASATI SUL METEO  === */
 .bg-mood-clear {
   /* Sole: giallo → azzurro cielo */
   background:
-    radial-gradient(900px 500px at 18% -10%, rgba(255,255,255,.35), transparent 60%),
+    radial-gradient(900px 500px at 18% -10%, rgba(255, 255, 255, .35), transparent 60%),
     linear-gradient(180deg, #FFE47A 0%, #FFD24D 22%, #7AD6FF 70%, #9AE0FF 100%);
 }
 
@@ -106,6 +154,7 @@ body:not(.dark-mode) .loading {color:#0c2846;}
   /* Parzialmente nuvoloso: celesti/azzurro-grigio */
   background: linear-gradient(180deg, #5685a0 0%, #b8d5e8 50%, #9fbdd3 100%);
 }
+
 .bg-mood-rain {
   /* Pioggia: blu medio-intenso */
   background: linear-gradient(180deg, #3670aa 0%, #24548f 60%, #2f5e9c 100%);
@@ -140,7 +189,7 @@ body:not(.dark-mode) .loading {color:#0c2846;}
 .bg-mood-night {
   /* Notte serena: blu profondo con aloni */
   background:
-    radial-gradient(700px 320px at 16% -10%, rgba(255,255,255,.28), transparent 60%),
+    radial-gradient(700px 320px at 16% -10%, rgba(255, 255, 255, .28), transparent 60%),
     linear-gradient(180deg, #153555 0%, #102a45 60%, #0c2237 100%);
 }
 
@@ -151,6 +200,7 @@ body:not(.dark-mode) .loading {color:#0c2846;}
   width: 70px;
   height: 70px;
 }
+
 .weather-icon:hover {
   transform: scale(1.2);
   filter: drop-shadow(0 0 10px rgba(255, 220, 80, .55));
@@ -158,47 +208,155 @@ body:not(.dark-mode) .loading {color:#0c2846;}
 }
 
 /* sole */
-.sun-core { fill: #ffe173; transition: all .3s ease; }
+.sun-core {
+  fill: #ffe173;
+  transition: all .3s ease;
+}
+
 .sun-rays {
   stroke: #ffd84f;
   stroke-width: 1.6;
   transform-origin: 12px 12px;
   animation: rays 18s linear infinite;
 }
-.weather-icon:hover .sun-core { fill: #fff2a1; }
-@keyframes rays { from{transform:rotate(0)}to{transform:rotate(360deg)} }
+
+.weather-icon:hover .sun-core {
+  fill: #fff2a1;
+}
+
+@keyframes rays {
+  from {
+    transform: rotate(0)
+  }
+
+  to {
+    transform: rotate(360deg)
+  }
+}
 
 /* pioggia */
-.rain-drop { stroke:#7ed0ff; animation:raindrop 1.25s ease-in infinite; }
-.rain-drop.d2{animation-delay:.2s}.rain-drop.d3{animation-delay:.4s}
-@keyframes raindrop{
-  0%{transform:translateY(0);opacity:.9}
-  100%{transform:translateY(6px);opacity:.3}
+.rain-drop {
+  stroke: #7ed0ff;
+  animation: raindrop 1.25s ease-in infinite;
 }
-.weather-icon:hover .rain-drop { stroke:#ffe173; }
+
+.rain-drop.d2 {
+  animation-delay: .2s
+}
+
+.rain-drop.d3 {
+  animation-delay: .4s
+}
+
+@keyframes raindrop {
+  0% {
+    transform: translateY(0);
+    opacity: .9
+  }
+
+  100% {
+    transform: translateY(6px);
+    opacity: .3
+  }
+}
+
+.weather-icon:hover .rain-drop {
+  stroke: #ffe173;
+}
 
 /* neve */
-.snow-flake { stroke:#b5e2ff; animation:snow 1.6s ease-in-out infinite alternate; }
-.snow-flake.d2{animation-delay:.2s}.snow-flake.d3{animation-delay:.4s}
-@keyframes snow{
-  0%{transform:translateY(0) rotate(0)}
-  100%{transform:translateY(5px) rotate(15deg)}
+.snow-flake {
+  stroke: #b5e2ff;
+  animation: snow 1.6s ease-in-out infinite alternate;
 }
-.weather-icon:hover .snow-flake { stroke:#ffe173; }
+
+.snow-flake.d2 {
+  animation-delay: .2s
+}
+
+.snow-flake.d3 {
+  animation-delay: .4s
+}
+
+@keyframes snow {
+  0% {
+    transform: translateY(0) rotate(0)
+  }
+
+  100% {
+    transform: translateY(5px) rotate(15deg)
+  }
+}
+
+.weather-icon:hover .snow-flake {
+  stroke: #ffe173;
+}
 
 /* fulmine */
-.storm-bolt { fill:#a58cff; filter:drop-shadow(0 0 6px rgba(165,140,255,.35)); animation:bolt 1.8s ease-in-out infinite; }
-@keyframes bolt{0%,100%{opacity:.8}45%{opacity:1}}
-.weather-icon:hover .storm-bolt { fill:#ffe173; }
+.storm-bolt {
+  fill: #a58cff;
+  filter: drop-shadow(0 0 6px rgba(165, 140, 255, .35));
+  animation: bolt 1.8s ease-in-out infinite;
+}
+
+@keyframes bolt {
+
+  0%,
+  100% {
+    opacity: .8
+  }
+
+  45% {
+    opacity: 1
+  }
+}
+
+.weather-icon:hover .storm-bolt {
+  fill: #ffe173;
+}
 
 /* nebbia */
-.mist-line { stroke:#a5b8c9; animation:mist 3s linear infinite; }
-@keyframes mist{0%{transform:translateX(0);opacity:.9}100%{transform:translateX(8px);opacity:.75}}
-.weather-icon:hover .mist-line { stroke:#ffe173; }
+.mist-line {
+  stroke: #a5b8c9;
+  animation: mist 3s linear infinite;
+}
+
+@keyframes mist {
+  0% {
+    transform: translateX(0);
+    opacity: .9
+  }
+
+  100% {
+    transform: translateX(8px);
+    opacity: .75
+  }
+}
+
+.weather-icon:hover .mist-line {
+  stroke: #ffe173;
+}
 
 /* glow */
-.icon-glow { filter: drop-shadow(0 0 8px rgba(255,230,130,.35)); animation:pulse 3s ease-in-out infinite; }
+.icon-glow {
+  filter: drop-shadow(0 0 8px rgba(255, 230, 130, .35));
+  animation: pulse 3s ease-in-out infinite;
+}
+
 @keyframes pulse {
-  0%,100%{filter:drop-shadow(0 0 8px rgba(255,230,130,.25))}
-  50%{filter:drop-shadow(0 0 14px rgba(255,230,130,.55))}
+
+  0%,
+  100% {
+    filter: drop-shadow(0 0 8px rgba(255, 230, 130, .25))
+  }
+
+  50% {
+    filter: drop-shadow(0 0 14px rgba(255, 230, 130, .55))
+  }
+}
+
+@media (max-width: 1023px) {
+  .page-content {
+    padding-top: 115px;
+  }
 }

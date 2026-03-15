@@ -28,13 +28,13 @@ function App() {
 
   // Geolocalizzazione automatica al mount
   useEffect(() => {
-  (async () => {
-    const coords = await getLocation();
-    if (coords) {
-      setCoordinates(coords);
-      setCoords(coords); // aggiorna anche la mappa/radar
-    }
-  })();
+    (async () => {
+      const coords = await getLocation();
+      if (coords) {
+        setCoordinates(coords);
+        setCoords(coords); // aggiorna anche la mappa/radar
+      }
+    })();
   }, []);
 
 
@@ -62,7 +62,7 @@ function App() {
   const handleUseGps = (coords) => {
     setCoordinates(coords);
   };
-    // Funzione per ottenere il nome città da coordinate (reverse geocoding)
+  // Funzione per ottenere il nome città da coordinate (reverse geocoding)
   async function reverseGeocodeSmart(lat, lon) {
     try {
       const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=it`;
@@ -107,7 +107,7 @@ function App() {
 
   const asArray = (x) => (Array.isArray(x) ? x : []);
   const hourlyAll = asArray(weather?.hourlyNorm);
-  const dailyAll  = asArray(weather?.dailyNorm);
+  const dailyAll = asArray(weather?.dailyNorm);
 
   // Orario limitato a OGGI: da ora fino alle 23:59 locali.
   const todayHourly = useMemo(() => {
@@ -131,22 +131,22 @@ function App() {
     <div className="min-h-screen text-white/95">
       <Navbar timezone={timezone} />
       <SearchBar onSearch={handleCitySearch} onUseGps={handleUseGps} />
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto page-content">
         {weatherLoading && (
           <p className="loading my-6">
             <img src="/favicon.png" alt="Caricamento" className="icon" />Caricamento dati meteo...</p>
-          )}
-      {error && <p className="error">{error}</p>}
-      {weather && <WeatherCard weather={weather} city={city} timezone={timezone} />}
-      <section className={`rounded-3xl border border-white/30 bg-[rgba(255,255,255,0.18)] backdrop-blur-md shadow-[0_40px_100px_rgba(0,0,0,0.45)] p-6 mt-6 flex flex-col gap-6 ${containerBg}`}>
+        )}
+        {error && <p className="error">{error}</p>}
+        {weather && <WeatherCard weather={weather} city={city} timezone={timezone} />}
+        <section className={`rounded-3xl border border-white/30 bg-[rgba(255,255,255,0.18)] backdrop-blur-md shadow-[0_40px_100px_rgba(0,0,0,0.45)] p-6 mt-6 flex flex-col gap-6 ${containerBg}`}>
           <Hourly
             city={city}
             units={units}
             data={todayHourly}     // oggi fino alle 23
             pageSize={5}          // 5 per pagina
-            onMoodChange={setMood}/>
-      </section>
-    {/* CARD METEO + GRAFICO */}
+            onMoodChange={setMood} />
+        </section>
+        {/* CARD METEO + GRAFICO */}
         <section className={`rounded-3xl border border-white/30 backdrop-blur-md shadow-[0_40px_100px_rgba(0,0,0,0.45)]
                     p-6 mt-6 flex flex-col gap-6
                     ${containerBg}`}>
